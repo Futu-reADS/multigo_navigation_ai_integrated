@@ -1,7 +1,7 @@
 # Multi-Go
 
 ## Overview
-Multi-Go autonomous robot for wheelchair, and cart mobility. 
+Multi-Go autonomous robot for wheelchair and cart mobility. 
 
 **Keywords:** ARuco, Navigation stack, docking
 
@@ -16,6 +16,11 @@ Multi-Go autonomous robot for wheelchair, and cart mobility.
 ### Cloning from gitlab
 
     git clone -b feature/wheelchair_docking https://github.com/ttvines/multigo.git
+    
+    cd ~/multigo
+    rosdep update
+    rosdep install --from-paths src --ignore-src -r -y
+    colcon build --symlink-install
 
 Open model folder and move multigo and wheelchair models to .gazebo/models folder. 
 
@@ -23,10 +28,6 @@ Open model folder and move multigo and wheelchair models to .gazebo/models folde
   Run following commands:
   
     cd ~/multigo
-    rosdep update
-    rosdep install --from-paths src --ignore-src -r -y
-
-    colcon build --symlink-install
     source install/setup.bash 
     ros2 launch boot multigo_simulation_launch.py 
 
