@@ -24,6 +24,8 @@ Multi-Go autonomous robot for wheelchair and cart mobility.
 
 Open model folder and move multigo and wheelchair models to .gazebo/models folder. 
 
+    cp -r models/multigo models/wheelchair ~/.gazebo/models/
+    
 ## Run	
   Run following commands:
   
