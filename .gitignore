@@ -1,0 +1,11 @@
+# Ignore log files
+*.log
+log
+
+# Ignore VSCode settings
+.vscode/
+
+# Ignore build file
+build
+install
+__pycache__
