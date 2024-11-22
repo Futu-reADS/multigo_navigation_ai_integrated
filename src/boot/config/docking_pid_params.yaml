@@ -1,0 +1,14 @@
+nav_docking_node:
+  ros__parameters:
+    pid_parameters:
+      kp_x: 0.05
+      ki_x: 0.05
+      kd_x: 0.05
+
+      kp_y: 0.50
+      ki_y: 0.03
+      kd_y: 0.04
+    
+      kp_z: 0.05
+      ki_z: 0.05
+      kd_z: 0.05

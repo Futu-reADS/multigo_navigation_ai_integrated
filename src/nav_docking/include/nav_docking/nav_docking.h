@@ -1,0 +1,107 @@
+#ifndef NAV_GOAL_H
+#define NAV_GOAL_H
+
+#include <rclcpp/rclcpp.hpp>
+#include <tf2_ros/transform_listener.h>
+#include <tf2_ros/buffer.h>
+#include <geometry_msgs/msg/pose_stamped.hpp>
+#include <tf2/transform_datatypes.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
+#include "geometry_msgs/msg/pose.hpp"
+#include "geometry_msgs/msg/pose_array.hpp"
+#include "geometry_msgs/msg/pose_stamped.hpp"
+#include <string>
+#include <regex>
+#include <vector>
+
+
+namespace nav_docking
+{
+    class Nav_docking : public rclcpp::Node
+    {
+    public:
+        Nav_docking();
+    private:
+
+        void arucoPoseFrontCallback(const geometry_msgs::msg::PoseArray::SharedPtr msg);
+        void arucoPoseLeftCallback(const geometry_msgs::msg::PoseArray::SharedPtr msg);
+        void arucoPoseRightCallback(const geometry_msgs::msg::PoseArray::SharedPtr msg);
+        int extractMarkerIds(const geometry_msgs::msg::Pose& pose, const std::string& frame_id);
+        double calculate(double error, double& integral, double& prev_error, 
+                               double kp, double ki, double kd, double callback_duration, 
+                               double max_output, double min_output, double min_error);
+        void frontMarkerCmdVelPublisher();
+        void sideMarkerCmdVelPublisher();
+        // TF buffer and listener
+        std::shared_ptr<tf2_ros::Buffer> tf_buffer;
+        std::shared_ptr<tf2_ros::TransformListener> tf_listener;
+        rclcpp::Subscription<geometry_msgs::msg::PoseArray>::SharedPtr pose_array_front_sub;
+        rclcpp::Subscription<geometry_msgs::msg::PoseArray>::SharedPtr pose_array_left_sub;
+        rclcpp::Subscription<geometry_msgs::msg::PoseArray>::SharedPtr pose_array_right_sub;
+        rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub;
+
+        std::string marker_topic_front = "aruco_detect/markers_front";
+        std::string marker_topic_left = "aruco_detect/markers_left";
+        std::string marker_topic_right = "aruco_detect/markers_right";
+        int publish_rate = 30;
+        double marker_delay_threshold_sec = 0.15;
+        bool stage_4_docking_status=false;
+        bool stage_5_docking_status=false;
+        bool stage_6_docking_status=false;
+
+        rclcpp::TimerBase::SharedPtr front_timer_;
+        rclcpp::TimerBase::SharedPtr side_timer_;
+        rclcpp::Time marker_time_front = this->now();
+        rclcpp::Time marker_time_left = this->now();
+        rclcpp::Time marker_time_right = this->now();
+
+        std::string base_frame = "base_link";
+        std::string camera_front_frame= "camera_front_frame";
+        std::string camera_left_frame= "camera_left_frame";
+        std::string camera_right_frame= "camera_right_frame";
+        int found_aruco_marker_id_front;
+        int found_aruco_marker_id_left;
+        int found_aruco_marker_id_right;
+        int desired_aruco_marker_id_front;
+        // front marker offset
+        float aruco_distance_offset_front;
+        float aruco_left_right_offset_front;
+        // side markers offset
+        float aruco_distance_offset_dual;
+        float aruco_center_offset_dual;
+
+        int desired_aruco_marker_id_left;
+        int desired_aruco_marker_id_right;
+
+        float docking_y_axis_threshold = 0.025;
+
+        // Marker variables
+        tf2::Vector3 front_transformed_marker_t;
+        double front_roll, front_pitch, front_yaw;
+        tf2::Vector3 left_transformed_marker_t;
+        double left_roll, left_pitch, left_yaw;
+        tf2::Vector3 right_transformed_marker_t;
+        double right_roll, right_pitch, right_yaw;
+
+        // PID parameters
+        double kp_x = 0.05, ki_x = 0.05, kd_x = 0.05;
+        double kp_y = 0.50, ki_y = 0.03, kd_y = 0.04;
+        double kp_z = 0.05, ki_z = 0.05, kd_z = 0.05;
+        double max_speed = 1.11;
+        double min_speed = 0.01;
+        // Initialize integral and previous error terms for x and y
+        double integral_x = 0.0, prev_error_x = 0.0;
+        double integral_y = 0.0, prev_error_y = 0.0;
+        double integral_z = 0.0, prev_error_z = 0.0;
+
+        double callback_duration_front; // loop time
+        double callback_duration_side; // loop time
+        double min_error = 0.002; // min error of 2mm
+        double min_docking_error = 0.001; // min error of 2mm
+
+
+    };
+
+} // namespace nav_docking
+
+#endif // NAV_GOAL_H
