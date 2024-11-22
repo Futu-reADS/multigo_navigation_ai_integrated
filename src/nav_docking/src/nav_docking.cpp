@@ -435,8 +435,8 @@ namespace nav_docking
         double right_marker_x = right_transformed_marker_t.x();
         double right_marker_y = right_transformed_marker_t.y();
         double distance = ((-1 * right_marker_y) + left_marker_y) / 2;
-        double rotation =  right_marker_y + left_marker_y;
-        double center = left_marker_x - right_marker_x;
+        double rotation =  (-1) * (left_marker_y + right_marker_y);
+        double center =  right_marker_x - left_marker_x;
         double error_dist = distance - aruco_distance_offset_dual; // distance - aruco_distance_offset_dual;
         double error_center = center - aruco_center_offset_dual;
         double error_rotation = rotation;
