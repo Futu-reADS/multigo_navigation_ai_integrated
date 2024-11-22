@@ -13,7 +13,7 @@ Multi-Go autonomous robot for wheelchair and cart mobility.
 
 ## Installation
 
-### Cloning from gitlab
+### Cloning
 
     git clone -b feature/wheelchair_docking https://github.com/ttvines/multigo.git
     
