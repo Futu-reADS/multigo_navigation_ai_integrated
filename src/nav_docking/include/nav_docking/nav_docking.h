@@ -1,5 +1,5 @@
-#ifndef NAV_GOAL_H
-#define NAV_GOAL_H
+#ifndef NAV_DOCKING_H
+#define NAV_DOCKING_H
 
 #include <rclcpp/rclcpp.hpp>
 #include <tf2_ros/transform_listener.h>

@@ -85,7 +85,7 @@ namespace nav_docking
                             std::bind(&Nav_docking::arucoPoseRightCallback, this, std::placeholders::_1));
 
         // Create a publisher for Nav2 goal
-        cmd_vel_pub = this->create_publisher<geometry_msgs::msg::Twist>("cmd_vel", 10);
+        cmd_vel_pub = this->create_publisher<geometry_msgs::msg::Twist>("cmd_vel_final", 10);
         
         auto period = std::chrono::milliseconds(1000 / publish_rate);  // 1000 ms / rate (Hz)
 
@@ -435,8 +435,8 @@ namespace nav_docking
         double right_marker_x = right_transformed_marker_t.x();
         double right_marker_y = right_transformed_marker_t.y();
         double distance = ((-1 * right_marker_y) + left_marker_y) / 2;
-        double rotation =  (-1) * (left_marker_y + right_marker_y);
-        double center =  right_marker_x - left_marker_x;
+        double rotation = (left_marker_y - (-1 * right_marker_y));
+        double center =  left_marker_x - ((left_marker_x + right_marker_x) / 2);
         double error_dist = distance - aruco_distance_offset_dual; // distance - aruco_distance_offset_dual;
         double error_center = center - aruco_center_offset_dual;
         double error_rotation = rotation;
