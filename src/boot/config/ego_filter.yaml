@@ -1,0 +1,10 @@
+crop_box_filter:
+  ros__parameters:
+    box_min_x: -0.5
+    box_min_y: -0.3
+    box_min_z: -0.3
+    box_max_x: 1.0
+    box_max_y: 0.3
+    box_max_z: 1.5
+    box_frame: base_link  # Reference frame for the filter
+    negative: true       # If true, points outside the box are kept
