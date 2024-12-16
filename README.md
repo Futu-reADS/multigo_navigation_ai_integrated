@@ -13,6 +13,20 @@ Multi-Go autonomous robot for wheelchair and cart mobility.
 
 ## Installation
 
+	sudo apt update
+	sudo apt install gazebo ros-humble-gazebo-ros-pkgs ros-humble-gazebo-ros
+	sudo apt install ros-humble-gazebo-*
+	sudo apt install ros-$ROS_DISTRO-gazebo-ros-pkgs
+	sudo apt install ros-humble-pcl-conversions ros-humble-pcl-msgs python3-pip
+	pip3 install pyyaml
+	sudo apt install ros-$ROS_DISTRO-rtabmap-ros
+	sudo apt update
+
+Install NAV2 
+	https://emanual.robotis.com/docs/en/platform/turtlebot3/quick-start/
+
+
+
 ### Cloning
 
     git clone -b feature/wheelchair_docking https://github.com/ttvines/multigo.git
