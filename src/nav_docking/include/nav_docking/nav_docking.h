@@ -27,7 +27,7 @@ namespace nav_docking
         void arucoPoseLeftCallback(const geometry_msgs::msg::PoseArray::SharedPtr msg);
         void arucoPoseRightCallback(const geometry_msgs::msg::PoseArray::SharedPtr msg);
         int extractMarkerIds(const geometry_msgs::msg::Pose& pose, const std::string& frame_id);
-        double calculate(double error, double& integral, double& prev_error, 
+        double calculate(double error, double& prev_error, 
                                double kp, double ki, double kd, double callback_duration, 
                                double max_output, double min_output, double min_error);
         void frontMarkerCmdVelPublisher();
@@ -44,7 +44,8 @@ namespace nav_docking
         std::string marker_topic_left = "aruco_detect/markers_left";
         std::string marker_topic_right = "aruco_detect/markers_right";
         int publish_rate = 30;
-        double marker_delay_threshold_sec = 0.15;
+        double marker_delay_threshold_sec = 0.2;
+        double docking_reset_threshold_sec = 3.0;
         bool stage_4_docking_status=false;
         bool stage_5_docking_status=false;
         bool stage_6_docking_status=false;
@@ -87,17 +88,23 @@ namespace nav_docking
         double kp_x = 0.05, ki_x = 0.05, kd_x = 0.05;
         double kp_y = 0.50, ki_y = 0.03, kd_y = 0.04;
         double kp_z = 0.05, ki_z = 0.05, kd_z = 0.05;
-        double max_speed = 1.11;
+        double max_speed = 0.1;
         double min_speed = 0.01;
         // Initialize integral and previous error terms for x and y
-        double integral_x = 0.0, prev_error_x = 0.0;
-        double integral_y = 0.0, prev_error_y = 0.0;
-        double integral_z = 0.0, prev_error_z = 0.0;
+        double prev_error_x = 0.0;
+        double prev_error_y = 0.0;
+        double prev_error_front_yaw = 0.0;
+
+        double prev_error_dist;
+        double prev_error_center;
+        double prev_error_rotation;
 
         double callback_duration_front; // loop time
         double callback_duration_side; // loop time
         double min_error = 0.002; // min error of 2mm
-        double min_docking_error = 0.001; // min error of 2mm
+        double min_docking_error = 0.001; // min error of 0.2mm
+        double previous_error_center;
+        int dist_gain = 7;
 
 
     };
