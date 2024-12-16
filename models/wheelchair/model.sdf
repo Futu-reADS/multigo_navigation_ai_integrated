@@ -492,6 +492,23 @@
         </geometry>
       </visual>
     </link>
+    
+     <!-- Aruco marker right -->
+      <joint name="aruco_marker_right_background_joint" type="fixed">
+      <parent>aruco_marker_right_link</parent>
+      <child>aruco_marker_right_background_link</child>
+      <pose relative_to="aruco_marker_right_link">-0.0 0.0 0.0 0.0 0.0 -0.0</pose>
+    </joint>
+    <link name="aruco_marker_right_background_link">
+    <pose relative_to="aruco_marker_right_link">0.005 0.0 -0.01 0 0 0</pose>
+      <visual name="aruco_marker_right_background_visual">
+        <geometry>
+          <mesh>
+            <uri>model://wheelchair/meshes/background.dae</uri>
+          <scale>0.15 0.15 0.15 </scale></mesh>
+        </geometry>
+      </visual>
+    </link>
 
     <!-- <plugin name='differential_drive' filename='libgazebo_ros_diff_drive.so'>
 

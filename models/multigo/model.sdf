@@ -175,7 +175,7 @@
         <plugin name='lidar_3d_controller' filename='libgazebo_ros_ray_sensor.so'>
           <ros>
             <!-- <namespace>multigo</namespace> -->
-            <remapping>~/out:=scan</remapping>
+            <remapping>~/out:=scan_laserscan</remapping>
           </ros>
           <output_type>sensor_msgs/LaserScan</output_type>
           <frame_name>base_scan</frame_name>
@@ -184,13 +184,13 @@
               <!-- Additional plugin for LaserScan output -->
       <plugin name='lidar_laserscan_controller' filename='libgazebo_ros_ray_sensor.so'>
           <ros>
-              <remapping>~/out:=scan_laserscan</remapping>
+              <!-- <remapping>~/out:=scan_pointcloud</remapping> -->
+              <remapping>~/out:=scan_pointcloud</remapping>
           </ros>
           <output_type>sensor_msgs/PointCloud2</output_type> <!-- Output 3D point cloud -->
                 <alwaysOn>1</alwaysOn>
                 <updateRate>10</updateRate>
-                <topicName>lidar_3d</topicName>
-                <frame_name>lidar_frame</frame_name>
+                <frame_name>base_scan</frame_name>
       </plugin>
         <pose>0 0 1.1 0 -0 0</pose>
       </sensor>
@@ -216,13 +216,13 @@
       <sensor name="camera" type="camera">
         <always_on>true</always_on>
         <visualize>true</visualize>
-        <update_rate>5</update_rate>
+        <update_rate>10</update_rate>
         <camera name="intel_realsense_r200_front">
-          <horizontal_fov>1.02974</horizontal_fov>
+          <horizontal_fov>1.3265</horizontal_fov>
           <image>
-            <width>1920</width>
-            <height>1080</height>
-            <format>R8G8B8</format>
+            <width>1600</width>
+            <height>1200</height>
+            <format>L8</format> <!-- grayscale -->
           </image>
           <clip>
             <near>0.02</near>
@@ -270,13 +270,13 @@
       <sensor name="camera" type="camera">
         <always_on>true</always_on>
         <visualize>true</visualize>
-        <update_rate>5</update_rate>
+        <update_rate>10</update_rate>
         <camera name="raspberry_pi_left">
-          <horizontal_fov>1.7802</horizontal_fov>
+          <horizontal_fov>1.9199</horizontal_fov>
           <image>
-            <width>1644</width>
-            <height>1080</height>
-            <format>R8G8B8</format>
+            <width>2048</width>
+            <height>1536</height>
+            <format>L8</format> <!-- grayscale -->
           </image>
           <clip>
             <near>0.02</near>
@@ -324,13 +324,13 @@
       <sensor name="camera" type="camera">
         <always_on>true</always_on>
         <visualize>true</visualize>
-        <update_rate>5</update_rate>
+        <update_rate>10</update_rate>
         <camera name="raspberry_pi_right">
-          <horizontal_fov>1.7802</horizontal_fov>
+          <horizontal_fov>1.9199</horizontal_fov>
           <image>
-            <width>1644</width>
-            <height>1080</height>
-            <format>R8G8B8</format>
+            <width>2048</width>
+            <height>1536</height>
+            <format>L8</format> <!-- grayscale -->
           </image>
           <clip>
             <near>0.02</near>
@@ -564,7 +564,7 @@
         <pose relative_to='front_left_wheel_joint'>0 0 0 0 -0 0</pose>
         <inertial>
           <pose>0 0 0 0 -0 0</pose>
-          <mass>0.6</mass>
+          <mass>2.6</mass>
           <inertia>
             <ixx>0.00138624</ixx>
             <ixy>0</ixy>
@@ -638,7 +638,7 @@
         <pose relative_to='front_right_wheel_joint'>0 0 0 0 -0 0</pose>
         <inertial>
           <pose>0 0 0 0 -0 0</pose>
-          <mass>0.6</mass>
+          <mass>2.6</mass>
           <inertia>
             <ixx>0.00138624</ixx>
             <ixy>0</ixy>
@@ -712,7 +712,7 @@
         <pose relative_to='rear_left_wheel_joint'>0 0 0 0 -0 0</pose>
         <inertial>
           <pose>0 0 0 0 -0 0</pose>
-          <mass>0.6</mass>
+          <mass>2.6</mass>
           <inertia>
             <ixx>0.00138624</ixx>
             <ixy>0</ixy>
@@ -786,7 +786,7 @@
         <pose relative_to='rear_right_wheel_joint'>0 0 0 0 -0 0</pose>
         <inertial>
           <pose>0 0 0 0 -0 0</pose>
-          <mass>0.6</mass>
+          <mass>2.6</mass>
           <inertia>
             <ixx>0.00138624</ixx>
             <ixy>0</ixy>
