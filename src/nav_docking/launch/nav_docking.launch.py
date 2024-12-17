@@ -7,12 +7,11 @@ import os
     
 
 def generate_launch_description():
-    desired_aruco_marker_id_front = 20
-    desired_aruco_marker_id_left = desired_aruco_marker_id_front + 1
-    desired_aruco_marker_id_right = desired_aruco_marker_id_front + 2
-    aruco_distance_offset_front = 0.31
-    aruco_left_right_offset_front = 0.17
-    aruco_distance_offset_dual = 0.2044
+    desired_aruco_marker_id_left = 20
+    desired_aruco_marker_id_right = desired_aruco_marker_id_left + 1
+    aruco_distance_offset = 0.31
+    aruco_left_right_offset = 0.17
+    aruco_distance_offset_dual = 0.435
     aruco_center_offset_dual = 0.0
 
     # Get the path to the pid_params.yaml file
@@ -29,17 +28,14 @@ def generate_launch_description():
             name='nav_docking_node',
             parameters=[pid_params_file,
                 {"base_frame": "base_link"},
-                {"camera_front_frame": "camera_front_frame"},
-                {"camera_left_frame": "camera_left_frame"},
-                {"camera_right_frame": "camera_right_frame"},
-                {"desired_aruco_marker_id_front": desired_aruco_marker_id_front},
+                {"camera_left_frame": "camera_front_left_frame"},
+                {"camera_right_frame": "camera_front_right_frame"},
                 {"desired_aruco_marker_id_left": desired_aruco_marker_id_left},
                 {"desired_aruco_marker_id_right": desired_aruco_marker_id_right},
-                {"aruco_distance_offset_front": aruco_distance_offset_front },
-                {"aruco_left_right_offset_front": aruco_left_right_offset_front},
+                {"aruco_distance_offset": aruco_distance_offset},
+                {"aruco_left_right_offset": aruco_left_right_offset},
                 {"aruco_distance_offset_dual": aruco_distance_offset_dual},
                 {"aruco_center_offset_dual": aruco_center_offset_dual},
-                {"marker_topic_front": "aruco_detect/markers_front"},
                 {"marker_topic_left": "aruco_detect/markers_left"},
                 {"marker_topic_right": "aruco_detect/markers_right"},
             ],

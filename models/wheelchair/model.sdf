@@ -443,14 +443,14 @@
       </link>
 
       <!-- Aruco marker front -->
-      <joint name="aruco_marker_front_joint" type="fixed">
+      <joint name="aruco_marker_front_left_joint" type="fixed">
       <parent>base_link</parent>
-      <child>aruco_marker_front_link</child>
+      <child>aruco_marker_front_left_link</child>
       <pose relative_to="base_link">-0.24 0.17 0.27 0 0 0</pose>
     </joint>
-    <link name="aruco_marker_front_link">
-    <pose relative_to="aruco_marker_front_joint">0.0 0.0 0.0 0 0 0</pose>
-      <visual name="aruco_marker_front_visual">
+    <link name="aruco_marker_front_left_link">
+    <pose relative_to="aruco_marker_front_left_joint">0.0 0.0 0.0 0 0 0</pose>
+      <visual name="aruco_marker_front_left_visual">
         <geometry>
           <mesh>
             <uri>model://wheelchair/meshes/Marker20.dae</uri>
@@ -459,15 +459,16 @@
       </visual>
     </link>
 
-      <!-- Aruco marker left -->
-      <joint name="aruco_marker_left_joint" type="fixed">
+
+      <!-- Aruco marker right -->
+      <joint name="aruco_marker_front_right_joint" type="fixed">
       <parent>base_link</parent>
-      <child>aruco_marker_left_link</child>
-      <pose relative_to="base_link">-0.271 0.205 0.27 0 0 1.57</pose>
+      <child>aruco_marker_front_right_link</child>
+      <pose relative_to="base_link">-0.24 -0.17 0.27 0 0 0</pose>
     </joint>
-    <link name="aruco_marker_left_link">
-    <pose relative_to="aruco_marker_left_joint">0.0 0.0 0.0 0 0 0</pose>
-      <visual name="aruco_marker_left_visual">
+    <link name="aruco_marker_front_right_link">
+    <pose relative_to="aruco_marker_front_right_joint">0.0 0.0 0.0 0 0 0</pose>
+      <visual name="aruco_marker_front_right_visual">
         <geometry>
           <mesh>
             <uri>model://wheelchair/meshes/Marker21.dae</uri>
@@ -475,32 +476,15 @@
         </geometry>
       </visual>
     </link>
-
-      <!-- Aruco marker right -->
-      <joint name="aruco_marker_right_joint" type="fixed">
-      <parent>base_link</parent>
-      <child>aruco_marker_right_link</child>
-      <pose relative_to="base_link">-0.271 -0.205 0.27 0 0 -1.57</pose>
-    </joint>
-    <link name="aruco_marker_right_link">
-    <pose relative_to="aruco_marker_right_joint">0.0 0.0 0.0 0 0 0</pose>
-      <visual name="aruco_marker_right_visual">
-        <geometry>
-          <mesh>
-            <uri>model://wheelchair/meshes/Marker22.dae</uri>
-          <scale>0.1 0.1 0.1 </scale></mesh>
-        </geometry>
-      </visual>
-    </link>
     
      <!-- Aruco marker right -->
       <joint name="aruco_marker_right_background_joint" type="fixed">
-      <parent>aruco_marker_right_link</parent>
+      <parent>aruco_marker_front_right_link</parent>
       <child>aruco_marker_right_background_link</child>
-      <pose relative_to="aruco_marker_right_link">-0.0 0.0 0.0 0.0 0.0 -0.0</pose>
+      <pose relative_to="aruco_marker_front_right_link">-0.0 0.0 0.0 0.0 0.0 -0.0</pose>
     </joint>
     <link name="aruco_marker_right_background_link">
-    <pose relative_to="aruco_marker_right_link">0.005 0.0 -0.01 0 0 0</pose>
+    <pose relative_to="aruco_marker_front_right_link">0.005 0.0 -0.01 0 0 0</pose>
       <visual name="aruco_marker_right_background_visual">
         <geometry>
           <mesh>

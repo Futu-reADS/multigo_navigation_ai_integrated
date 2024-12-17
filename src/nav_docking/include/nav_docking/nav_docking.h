@@ -35,12 +35,10 @@ namespace nav_docking
         // TF buffer and listener
         std::shared_ptr<tf2_ros::Buffer> tf_buffer;
         std::shared_ptr<tf2_ros::TransformListener> tf_listener;
-        rclcpp::Subscription<geometry_msgs::msg::PoseArray>::SharedPtr pose_array_front_sub;
         rclcpp::Subscription<geometry_msgs::msg::PoseArray>::SharedPtr pose_array_left_sub;
         rclcpp::Subscription<geometry_msgs::msg::PoseArray>::SharedPtr pose_array_right_sub;
         rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub;
 
-        std::string marker_topic_front = "aruco_detect/markers_front";
         std::string marker_topic_left = "aruco_detect/markers_left";
         std::string marker_topic_right = "aruco_detect/markers_right";
         int publish_rate = 30;
@@ -52,21 +50,18 @@ namespace nav_docking
 
         rclcpp::TimerBase::SharedPtr front_timer_;
         rclcpp::TimerBase::SharedPtr side_timer_;
-        rclcpp::Time marker_time_front = this->now();
         rclcpp::Time marker_time_left = this->now();
         rclcpp::Time marker_time_right = this->now();
 
         std::string base_frame = "base_link";
-        std::string camera_front_frame= "camera_front_frame";
-        std::string camera_left_frame= "camera_left_frame";
-        std::string camera_right_frame= "camera_right_frame";
-        int found_aruco_marker_id_front;
+        std::string camera_left_frame= "camera_front_left_frame";
+        std::string camera_right_frame= "camera_front_right_frame";
         int found_aruco_marker_id_left;
         int found_aruco_marker_id_right;
-        int desired_aruco_marker_id_front;
+
         // front marker offset
-        float aruco_distance_offset_front;
-        float aruco_left_right_offset_front;
+        float aruco_distance_offset;
+        float aruco_left_right_offset;
         // side markers offset
         float aruco_distance_offset_dual;
         float aruco_center_offset_dual;
@@ -93,13 +88,14 @@ namespace nav_docking
         // Initialize integral and previous error terms for x and y
         double prev_error_x = 0.0;
         double prev_error_y = 0.0;
-        double prev_error_front_yaw = 0.0;
+        double prev_error_left_yaw = 0.0;
 
         double prev_error_dist;
         double prev_error_center;
         double prev_error_rotation;
 
-        double callback_duration_front; // loop time
+        double callback_duration_left; // loop time
+        double callback_duration_right; // loop time
         double callback_duration_side; // loop time
         double min_error = 0.002; // min error of 2mm
         double min_docking_error = 0.001; // min error of 0.2mm

@@ -198,8 +198,8 @@
 
     <link name="camera_link"/>
 
-    <!-- front camera -->
-    <link name="camera_front_frame">
+    <!-- front Left camera -->
+    <link name="camera_front_left_frame">
       <inertial>
         <inertia>
           <ixx>0.001</ixx>
@@ -212,7 +212,7 @@
         <mass>0.035</mass>
       </inertial>
 
-      <pose relative_to="camera_front_joint">0.000 0.00 0.00 0 0 0</pose>
+      <pose relative_to="camera_front_left_joint">0.000 0.00 0.00 0 0 0</pose>
       <sensor name="camera" type="camera">
         <always_on>true</always_on>
         <visualize>true</visualize>
@@ -235,64 +235,11 @@
           </noise>
         </camera>
           <plugin name="camera_driver_front" filename="libgazebo_ros_camera.so">
-          <frameName>camera_front_frame</frameName>
-            <ros>
-              <remapping>/camera/camera_info:=/camera/color/camera_info_front</remapping>
-              <remapping>/camera/image_raw:=/camera/color/image_raw_front</remapping>
- 
-              <qos>
-                <topic name='/camera/color/image_raw_front'>
-                  <publisher>
-                    <reliability>reliable</reliability>
-                  </publisher>
-                </topic>
-              </qos>
-            </ros>
-          </plugin>
-      </sensor>
-    </link>   
-
-    <!-- Left Camera - Standard Raspberry Pi Camera -->
-    <link name="camera_left_frame">
-      <inertial>
-        <inertia>
-          <ixx>0.001</ixx>
-          <ixy>0.000</ixy>
-          <ixz>0.000</ixz>
-          <iyy>0.001</iyy>
-          <iyz>0.000</iyz>
-          <izz>0.001</izz>
-        </inertia>
-        <mass>0.035</mass>
-      </inertial>
-
-      <pose relative_to="camera_left_joint">0.000 0.00 0.00 0 0 0</pose>
-      <sensor name="camera" type="camera">
-        <always_on>true</always_on>
-        <visualize>true</visualize>
-        <update_rate>10</update_rate>
-        <camera name="raspberry_pi_left">
-          <horizontal_fov>1.9199</horizontal_fov>
-          <image>
-            <width>2048</width>
-            <height>1536</height>
-            <format>L8</format> <!-- grayscale -->
-          </image>
-          <clip>
-            <near>0.02</near>
-            <far>300</far>
-          </clip>
-          <noise>
-            <type>gaussian</type>
-            <mean>0.0</mean>
-            <stddev>0.007</stddev>
-          </noise>
-        </camera>
-          <plugin name="camera_driver_left" filename="libgazebo_ros_camera.so">
           <frameName>camera_left_frame</frameName>
             <ros>
               <remapping>/camera/camera_info:=/camera/color/camera_info_left</remapping>
               <remapping>/camera/image_raw:=/camera/color/image_raw_left</remapping>
+ 
               <qos>
                 <topic name='/camera/color/image_raw_left'>
                   <publisher>
@@ -304,10 +251,10 @@
           </plugin>
       </sensor>
     </link>   
-    
 
-    <!-- Right Camera - Standard Raspberry Pi Camera -->
-    <link name="camera_right_frame">
+  
+    <!-- Front Right Camera - Standard Raspberry Pi Camera -->
+    <link name="camera_front_right_frame">
       <inertial>
         <inertia>
           <ixx>0.001</ixx>
@@ -320,16 +267,16 @@
         <mass>0.035</mass>
       </inertial>
 
-      <pose relative_to="camera_right_joint">0.000 0.00 0.00 0 0 0</pose>
+      <pose relative_to="camera_front_right_joint">0.000 0.00 0.00 0 0 0</pose>
       <sensor name="camera" type="camera">
         <always_on>true</always_on>
         <visualize>true</visualize>
         <update_rate>10</update_rate>
         <camera name="raspberry_pi_right">
-          <horizontal_fov>1.9199</horizontal_fov>
+          <horizontal_fov>1.3265</horizontal_fov>
           <image>
-            <width>2048</width>
-            <height>1536</height>
+            <width>1600</width>
+            <height>1200</height>
             <format>L8</format> <!-- grayscale -->
           </image>
           <clip>
@@ -360,8 +307,6 @@
     </link>   
     
 
-
-
     <link name="tof_sensor_link_1">
       <inertial>
         <inertia>
@@ -374,7 +319,7 @@
         </inertia>
         <mass>0.035</mass>
       </inertial>
-      <pose relative_to="camera_joint">0 0.0 0.0 0 0 0</pose> 
+      <pose relative_to="camera_joint">-0.082 0.178 0.0 0 0 0</pose> 
       <sensor name="tof_sensor_1" type="ray">
           <always_on>true</always_on>
             <visualize>true</visualize>
@@ -420,7 +365,7 @@
         </inertia>
         <mass>0.035</mass>
       </inertial>
-      <pose relative_to="camera_joint">0 -0.32 0.0 0 0 0</pose>
+      <pose relative_to="camera_joint">-0.082 -0.178 0.0 0 0 0</pose>
       <sensor name="tof_sensor_2" type="ray">
           <always_on>true</always_on>
             <visualize>true</visualize>
@@ -467,32 +412,24 @@
       </axis>
     </joint>
 
-    <joint name="camera_front_joint" type="fixed">
+    <joint name="camera_front_left_joint" type="fixed">
       <parent>camera_link</parent>
-      <child>camera_front_frame</child>
+      <child>camera_front_left_frame</child>
       <pose relative_to="camera_joint">-0.082 0.178 0.0 0 0 0</pose>
       <axis>
         <xyz>0 0 1</xyz>
       </axis>
     </joint>
 
-    <joint name="camera_left_joint" type="fixed">
+    <joint name="camera_front_right_joint" type="fixed">
       <parent>camera_link</parent>
-      <child>camera_left_frame</child>
-      <pose relative_to="camera_joint">0.0 0.14 0.0 0 0 1.57</pose>
+      <child>camera_front_right_frame</child>
+      <pose relative_to="camera_joint">-0.082 -0.178 0.0 0 0 0</pose>
       <axis>
         <xyz>0 0 1</xyz>
       </axis>
     </joint>
 
-    <joint name="camera_right_joint" type="fixed">
-      <parent>camera_link</parent>
-      <child>camera_right_frame</child>
-      <pose relative_to="camera_joint">0.0 -0.14 0.0  0 0 -1.57</pose>
-      <axis>
-        <xyz>0 0 1</xyz>
-      </axis>
-    </joint>
 
     <joint name="tof_sensor_joint_1" type="fixed">
       <parent>camera_link</parent>
