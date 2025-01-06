@@ -24,6 +24,30 @@ install(
   DESTINATION share/${PROJECT_NAME}/config
 )
 
+# Install config directory into the share folder
+install(
+  DIRECTORY worlds/
+  DESTINATION share/${PROJECT_NAME}/worlds
+)
+
+# Install config directory into the share folder
+install(
+  DIRECTORY rviz/
+  DESTINATION share/${PROJECT_NAME}/rviz
+)
+
+# Install config directory into the share folder
+install(
+  DIRECTORY maps/
+  DESTINATION share/${PROJECT_NAME}/maps
+)
+
+# Install config directory into the share folder
+install(
+  DIRECTORY models/
+  DESTINATION share/${PROJECT_NAME}/models
+)
+
 # ament package macros
 ament_package()
 

@@ -236,7 +236,30 @@ def generate_launch_description():
                           'autostart': autostart,
                           'use_composition': use_composition,
                           'use_respawn': use_respawn}.items())
-    
+
+    parameters={
+          'frame_id':'base_link',
+          'use_sim_time':use_sim_time,
+          'subscribe_depth':False,
+          'subscribe_rgb':False,
+          'subscribe_scan':True,
+          'approx_sync':True,
+          'use_action_for_goal':True,
+          'Reg/Strategy':'1',
+          'Reg/Force3DoF':'true',
+          'RGBD/NeighborLinkRefining':'True',
+          'Grid/RangeMin':'0.2', # ignore laser scan points on the robot itself
+          'Optimizer/GravitySigma':'0' # Disable imu constraints (we are already in 2D)
+    }
+    remappings=[
+          ('scan', '/scan_pointcloud')]
+    arguments = []
+# RTAB-Map Localization Node (Using 3D LiDAR)
+    start_rtabmap_localization_cmd = Node(
+            package='rtabmap_slam', executable='rtabmap', output='screen',
+            parameters=[parameters],
+            remappings=remappings,
+            arguments=arguments)
 
     # Create the launch description and populate
     ld = LaunchDescription()
@@ -267,5 +290,6 @@ def generate_launch_description():
     ld.add_action(start_robot_state_publisher_cmd)
     ld.add_action(rviz_cmd)
     ld.add_action(bringup_cmd)
+    ld.add_action(start_rtabmap_localization_cmd)
 
     return ld
