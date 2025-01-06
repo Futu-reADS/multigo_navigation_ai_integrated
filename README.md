@@ -24,6 +24,7 @@ Multi-Go autonomous robot for wheelchair and cart mobility.
 	sudo apt update
 
 Install NAV2 
+
 	https://emanual.robotis.com/docs/en/platform/turtlebot3/quick-start/
 
 
@@ -47,9 +48,13 @@ Install NAV2
     source install/setup.bash 
 
 Simulation:
+
     ros2 launch boot simulation.launch.py 
+    
     ros2 launch boot run.launch.py 
 
 Robot: 
+
     ros2 launch boot boot.launch.py 
+    
     ros2 launch boot run.launch.py 
