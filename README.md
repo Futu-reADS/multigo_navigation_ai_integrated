@@ -50,9 +50,11 @@ Install NAV2
 Simulation:
 
     ros2 launch boot simulation.launch.py 
+    
     ros2 launch boot run.launch.py 
 
 Robot: 
 
     ros2 launch boot boot.launch.py 
+    
     ros2 launch boot run.launch.py 
