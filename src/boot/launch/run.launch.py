@@ -15,7 +15,7 @@
 import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, GroupAction, SetEnvironmentVariable, IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, GroupAction, TimerAction, SetEnvironmentVariable, IncludeLaunchDescription
 from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
@@ -28,6 +28,7 @@ def generate_launch_description():
     # Get the launch directory
     boot_dir = get_package_share_directory('boot')
     launch_dir = os.path.join(boot_dir, 'launch')
+    map_dir = os.path.join(boot_dir, 'maps')
     model_name = "multigo"
     model_sdf_file = "model.sdf"
     model_urdf_file = "multigo.urdf"
@@ -122,13 +123,21 @@ def generate_launch_description():
           'subscribe_rgb':False,
           'subscribe_scan':True,
           'approx_sync':True,
-          'use_action_for_goal':True,
+          'use_action_for_goal':False,
           'Reg/Strategy':'1',
           'Reg/Force3DoF':'true',
           'RGBD/NeighborLinkRefining':'True',
-          'Grid/RangeMin':'0.2', # ignore laser scan points on the robot itself
-          'Optimizer/GravitySigma':'0' # Disable imu constraints (we are already in 2D)
-            }
+          'Grid/RangeMin':'0.5',
+          'Grid/RangeMax':'10.0',
+          'Optimizer/GravitySigma':'0', # Disable imu constraints (we are already in 2D)
+          'Mem/RawDescriptorsKept':'true',
+          'Grid/CellSize': '0.05',  # Larger cell size reduces the resolution
+          # To use localization mode, 'Mem/IncrementalMemory':'false'
+          'Mem/IncrementalMemory':'false',
+          'Rtabmap/WorkingDirectory': map_dir,  # Path to the pre-saved RTAB-Map database (map)
+          'database_path': os.path.join(map_dir, 'rtabmap.db'),
+          }
+
     remappings_rtabmap = [
         ('scan', '/scan_laserscan'),
         ('cloud_in', '/scan_pointcloud'),
@@ -139,6 +148,7 @@ def generate_launch_description():
         ('local_costmap/costmap', '/local_costmap/costmap'),
         ('global_costmap/costmap', '/global_costmap/costmap'),
         ]
+    delay_duration = 1.0  # Delay for launching nodes
     # Define the robot URDF path using PathJoinSubstitution
     robot_urdf_path = os.path.join(boot_dir,'models' , model_name, model_urdf_file)
     print(robot_urdf_path)
@@ -303,7 +313,7 @@ def generate_launch_description():
                 parameters=[{'use_sim_time': use_sim_time},
                             {'autostart': autostart},
                             {'node_names': lifecycle_nodes_localization}]),
-            
+
             # 3d pointcloud to 2d laserscan conversion
             Node(
                 package='pointcloud_to_laserscan',
@@ -318,7 +328,7 @@ def generate_launch_description():
                     'angle_max': 3.1416,  # M_PI/2
                     'angle_increment': 0.0087,  # M_PI/360.0
                     'scan_time': 0.1,
-                    'range_min': 0.05,
+                    'range_min': 0.23,
                     'range_max': 40.0,
                     'use_inf': True,
                     'inf_epsilon': 1.0
@@ -339,15 +349,20 @@ def generate_launch_description():
                             'robot_description': robot_description}],
                 remappings=remappings),
             
-            # RTAB-Map Localization Node (Using 3D LiDAR)
-            Node(
-                package='rtabmap_slam', 
-                executable='rtabmap', 
-                name='rtabmap_localizer',
-                output='screen',
-                parameters=[parameters_rtabmap],
-                remappings=remappings_rtabmap,
-                arguments=[]),
+            # Timer action to delay RTAB-Map launch
+            TimerAction(
+                period=delay_duration,
+                actions=[
+                    # RTAB-Map Localization Node
+                    Node(
+                        package='rtabmap_slam',
+                        executable='rtabmap',
+                        name='rtabmap_localizer',
+                        output='screen',
+                        parameters=[parameters_rtabmap],
+                        remappings=remappings_rtabmap,
+                        arguments=[])
+                ]),
             
         ]
     )
