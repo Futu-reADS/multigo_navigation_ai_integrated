@@ -41,7 +41,7 @@ def generate_launch_description():
     use_respawn = LaunchConfiguration('use_respawn')
     log_level = LaunchConfiguration('log_level')
     
-    # Create our own temporary YAML files that include substitutions
+    # Our own map from map_dir is set here
     param_substitutions = {
         'use_sim_time': use_sim_time,
         'yaml_filename': map_yaml_file}
@@ -148,7 +148,7 @@ def generate_launch_description():
         ('local_costmap/costmap', '/local_costmap/costmap'),
         ('global_costmap/costmap', '/global_costmap/costmap'),
         ]
-    delay_duration = 1.0  # Delay for launching nodes
+    delay_duration = 2.0  # Delay for launching nodes
     # Define the robot URDF path using PathJoinSubstitution
     robot_urdf_path = os.path.join(boot_dir,'models' , model_name, model_urdf_file)
     print(robot_urdf_path)
