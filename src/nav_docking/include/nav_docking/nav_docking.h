@@ -28,7 +28,8 @@ namespace nav_docking
         Nav_docking();
     private:
 
-        bool enable_callback;
+        bool enable_callback = false;
+
         using Dock = nav_interface::action::Dock;
         using GoalHandleDock = rclcpp_action::ServerGoalHandle<Dock>;
 
