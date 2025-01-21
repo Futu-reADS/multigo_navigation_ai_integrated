@@ -12,3 +12,4 @@ __pycache__
 
 # Ignore map updates
 src/boot/maps/rtabmap.db
+src/mg_master

@@ -15,12 +15,19 @@
 #include <vector>
 
 
+#include "nav_interface/action/dock.hpp"
+#include "rclcpp_action/rclcpp_action.hpp"
+#include "rclcpp_components/register_node_macro.hpp"
+
+
 namespace nav_docking
 {
     class Nav_docking : public rclcpp::Node
     {
     public:
         Nav_docking();
+        using Dock = nav_interface::action::Dock;
+        using GoalHandleDock = rclcpp_action::ServerGoalHandle<Dock>;
     private:
 
         void arucoPoseFrontCallback(const geometry_msgs::msg::PoseArray::SharedPtr msg);

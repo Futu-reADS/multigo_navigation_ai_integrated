@@ -218,22 +218,22 @@ def generate_launch_description():
             
             
             # NAV2 GOAL PUB NODE
-            Node(
-                package='nav_goal',
-                executable='nav_goal_node',
-                name='nav_goal_node',
-                parameters=[
-                    {"map_frame": "map"},
-                    {"camera_front_left_frame": "camera_front_left_frame"},
-                    {"camera_front_right_frame": "camera_front_right_frame"},
-                    {"desired_aruco_marker_id_left": desired_aruco_marker_id_left},
-                    {"desired_aruco_marker_id_right": desired_aruco_marker_id_right},
-                    {"aruco_distance_offset": -nav2_distance_offset},
-                    {"aruco_left_right_offset": -aruco_left_right_offset},
-                    {"marker_topic_front_left": "/aruco_detect/markers_left"},
-                    {"marker_topic_front_right": "/aruco_detect/markers_right"},
-                ],
-                remappings=[('goal_pose', 'goal_pose')]),
+            #Node(
+            #    package='nav_goal',
+            #    executable='nav_goal_node',
+            #    name='nav_goal_node',
+            #    parameters=[
+            #        {"map_frame": "map"},
+            #        {"camera_front_left_frame": "camera_front_left_frame"},
+            #        {"camera_front_right_frame": "camera_front_right_frame"},
+            #        {"desired_aruco_marker_id_left": desired_aruco_marker_id_left},
+            #        {"desired_aruco_marker_id_right": desired_aruco_marker_id_right},
+            #        {"aruco_distance_offset": -nav2_distance_offset},
+            #        {"aruco_left_right_offset": -aruco_left_right_offset},
+            #        {"marker_topic_front_left": "/aruco_detect/markers_left"},
+            #        {"marker_topic_front_right": "/aruco_detect/markers_right"},
+            #    ],
+            #    remappings=[('goal_pose', 'goal_pose')]),
             
             # NAV DOCKING NODE
             Node(
