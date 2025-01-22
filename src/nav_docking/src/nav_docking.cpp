@@ -361,7 +361,7 @@ namespace nav_docking
         callback_duration_left = duration.seconds();  // seconds as a double
         duration = current_time - marker_time_right;
         callback_duration_right = duration.seconds();  // seconds as a double
-        RCLCPP_INFO(this->get_logger(), "front camera callback_duration: %f", callback_duration_left);
+        // RCLCPP_INFO(this->get_logger(), "front camera callback_duration: %f", callback_duration_left);
 
         // stage_4_docking_status = true;
         // Calculate the error
@@ -398,9 +398,9 @@ namespace nav_docking
                                                 kp_y, ki_y, kd_y, callback_duration_left, max_speed, min_speed, min_error);
                 twist_msg.angular.z = calculate(error_left_yaw, prev_error_left_yaw,
                                                 kp_z, ki_z, kd_z, callback_duration_left, max_speed, min_speed, min_error);
-                RCLCPP_INFO_STREAM(this->get_logger(), "front transform x aruco_distance_offset: " << aruco_distance_offset);
-                RCLCPP_INFO_STREAM(this->get_logger(), "front transform x error #####: " << error_x);
-                RCLCPP_INFO_STREAM(this->get_logger(), "twist_pub:x " << twist_msg.linear.x);
+                // RCLCPP_INFO_STREAM(this->get_logger(), "front transform x aruco_distance_offset: " << aruco_distance_offset);
+                // RCLCPP_INFO_STREAM(this->get_logger(), "front transform x error #####: " << error_x);
+                // RCLCPP_INFO_STREAM(this->get_logger(), "twist_pub:x " << twist_msg.linear.x);
             }
             else  // align robot
             {
@@ -410,9 +410,9 @@ namespace nav_docking
                 twist_msg.angular.z = calculate(error_left_yaw, prev_error_left_yaw,
                                                 kp_z, ki_z, kd_z, callback_duration_left, max_speed, min_speed, min_error);
 
-                RCLCPP_INFO_STREAM(this->get_logger(), "front transform y aruco_left_right_offset: " << aruco_left_right_offset);
-                RCLCPP_INFO_STREAM(this->get_logger(), "front transform y error #####: " << error_y);
-                RCLCPP_INFO_STREAM(this->get_logger(), "twist_pub:y " << twist_msg.linear.y );
+                // RCLCPP_INFO_STREAM(this->get_logger(), "front transform y aruco_left_right_offset: " << aruco_left_right_offset);
+                // RCLCPP_INFO_STREAM(this->get_logger(), "front transform y error #####: " << error_y);
+                // RCLCPP_INFO_STREAM(this->get_logger(), "twist_pub:y " << twist_msg.linear.y );
             }
 
             // Publish twist if error is above threshold and set status
@@ -420,8 +420,8 @@ namespace nav_docking
             {
                 cmd_vel_pub->publish(twist_msg);
                 stage_4_docking_status = false;
-                RCLCPP_INFO_STREAM(this->get_logger(), "Publish pub:x " << twist_msg.linear.x);
-                RCLCPP_INFO_STREAM(this->get_logger(), "Pubish pub:y " << twist_msg.linear.y);
+                // RCLCPP_INFO_STREAM(this->get_logger(), "Publish pub:x " << twist_msg.linear.x);
+                // RCLCPP_INFO_STREAM(this->get_logger(), "Pubish pub:y " << twist_msg.linear.y);
             }
             else
             {
@@ -430,7 +430,7 @@ namespace nav_docking
                 twist_msg.angular.z = 0.0;
                 cmd_vel_pub->publish(twist_msg);
                 stage_4_docking_status = true;  // publish docking status
-                RCLCPP_INFO_STREAM(this->get_logger(), "stage_4_docking_status true " << stage_4_docking_status);
+                // RCLCPP_INFO_STREAM(this->get_logger(), "stage_4_docking_status true " << stage_4_docking_status);
             }
         }
         else
@@ -460,9 +460,9 @@ namespace nav_docking
         if (callback_duration_side > docking_reset_threshold_sec)
             stage_4_docking_status = false;
 
-        RCLCPP_INFO(this->get_logger(), "side camera callback_duration: %f", callback_duration_side);
-        RCLCPP_INFO_STREAM(this->get_logger(), "stage_4_docking_status: " << stage_4_docking_status);
-        RCLCPP_INFO_STREAM(this->get_logger(), "kp_x: " << kp_x);
+        // RCLCPP_INFO(this->get_logger(), "side camera callback_duration: %f", callback_duration_side);
+        // RCLCPP_INFO_STREAM(this->get_logger(), "stage_4_docking_status: " << stage_4_docking_status);
+        // RCLCPP_INFO_STREAM(this->get_logger(), "kp_x: " << kp_x);
 
         // Calculate the error
         double left_marker_x = left_transformed_marker_t.x();
@@ -496,7 +496,7 @@ namespace nav_docking
                 stage_5_docking_status = false;
 
                 // RCLCPP_INFO_STREAM(this->get_logger(), "side transform dist aruco_distance_offset_side: " << aruco_distance_offset_dual);
-                RCLCPP_INFO_STREAM(this->get_logger(), "dual transform dist error #####: " << error_dist);
+                // RCLCPP_INFO_STREAM(this->get_logger(), "dual transform dist error #####: " << error_dist);
                 // RCLCPP_INFO_STREAM(this->get_logger(), "side transform error_center #####: " << error_center);
                 // RCLCPP_INFO_STREAM(this->get_logger(), "dual transform error_rotation #####: " << error_rotation);
 
@@ -504,8 +504,8 @@ namespace nav_docking
 
                 // RCLCPP_INFO_STREAM(this->get_logger(), "twist_pub:y: " << twist_msg.linear.y);
                 // RCLCPP_INFO_STREAM(this->get_logger(), "dual twist_pub:anglular Z: " << twist_msg.angular.z);
-                RCLCPP_INFO_STREAM(this->get_logger(), "dual right_marker_x: " << right_marker_x);
-                RCLCPP_INFO_STREAM(this->get_logger(), "dual left_marker_x: " << left_marker_x);
+                // RCLCPP_INFO_STREAM(this->get_logger(), "dual right_marker_x: " << right_marker_x);
+                // RCLCPP_INFO_STREAM(this->get_logger(), "dual left_marker_x: " << left_marker_x);
                 // RCLCPP_INFO_STREAM(this->get_logger(), "dual transform error_center #####: " << error_center);
                 // RCLCPP_INFO_STREAM(this->get_logger(), "dual twist_pub:y: " << twist_msg.linear.y);
 
@@ -522,26 +522,26 @@ namespace nav_docking
                 twist_msg.angular.z = 0.0;
                 cmd_vel_pub->publish(twist_msg);
                 stage_5_docking_status = true;  // publish docking status
-                RCLCPP_INFO_STREAM(this->get_logger(), "DOCKING COMPLETE" << "error_dist: " << error_dist << 
-                                                                            "error_center: " << error_center);
+                // RCLCPP_INFO_STREAM(this->get_logger(), "DOCKING COMPLETE" << "error_dist: " << error_dist << 
+                //                                                             "error_center: " << error_center);
             }
 
-        RCLCPP_INFO_STREAM(this->get_logger(), "dual transform dist error #####: " << error_dist);
-        RCLCPP_INFO_STREAM(this->get_logger(), "dual twist_pub:x: " << twist_msg.linear.x);
-        RCLCPP_INFO_STREAM(this->get_logger(), "dual left_marker_y: " << (left_marker_y - aruco_distance_offset_dual));
-        RCLCPP_INFO_STREAM(this->get_logger(), "dual right_marker_y: " << (-right_marker_y - aruco_distance_offset_dual));
-        RCLCPP_INFO_STREAM(this->get_logger(), "dual transform error_dist #####: " << error_dist);
+        // RCLCPP_INFO_STREAM(this->get_logger(), "dual transform dist error #####: " << error_dist);
+        // RCLCPP_INFO_STREAM(this->get_logger(), "dual twist_pub:x: " << twist_msg.linear.x);
+        // RCLCPP_INFO_STREAM(this->get_logger(), "dual left_marker_y: " << (left_marker_y - aruco_distance_offset_dual));
+        // RCLCPP_INFO_STREAM(this->get_logger(), "dual right_marker_y: " << (-right_marker_y - aruco_distance_offset_dual));
+        // RCLCPP_INFO_STREAM(this->get_logger(), "dual transform error_dist #####: " << error_dist);
         }
         if (stage_5_docking_status == true)
         {
             // RCLCPP_INFO_STREAM(this->get_logger(), "dual transform dist error #####: " << error_dist);
             // RCLCPP_INFO_STREAM(this->get_logger(), "dual transform center error #####: " << error_center);
             // RCLCPP_INFO_STREAM(this->get_logger(), "dual transform rotation error #####: " << error_rotation);
-            RCLCPP_INFO_STREAM(this->get_logger(), "dual transform dist error #####: " << error_dist);
-            RCLCPP_INFO_STREAM(this->get_logger(), "dual twist_pub:x: " << twist_msg.linear.x);
-            RCLCPP_INFO_STREAM(this->get_logger(), "dual left_marker_y: " << (left_marker_y - aruco_distance_offset_dual));
-            RCLCPP_INFO_STREAM(this->get_logger(), "dual right_marker_y: " << (-right_marker_y - aruco_distance_offset_dual));
-            RCLCPP_INFO_STREAM(this->get_logger(), "dual transform error_dist #####: " << error_dist);
+            // RCLCPP_INFO_STREAM(this->get_logger(), "dual transform dist error #####: " << error_dist);
+            // RCLCPP_INFO_STREAM(this->get_logger(), "dual twist_pub:x: " << twist_msg.linear.x);
+            // RCLCPP_INFO_STREAM(this->get_logger(), "dual left_marker_y: " << (left_marker_y - aruco_distance_offset_dual));
+            // RCLCPP_INFO_STREAM(this->get_logger(), "dual right_marker_y: " << (-right_marker_y - aruco_distance_offset_dual));
+            // RCLCPP_INFO_STREAM(this->get_logger(), "dual transform error_dist #####: " << error_dist);
 
             RCLCPP_INFO_STREAM(this->get_logger(), "------- DOCKING COMPLETE ------");
             cmd_vel_pub->publish(twist_msg);

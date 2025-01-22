@@ -101,9 +101,6 @@ namespace nav_docking
         double min_error = 0.002; // min error of 2mm
         double min_docking_error = 0.001; // min error of 0.2mm
         double previous_error_center;
-        int dist_gain = 7;
-
-
     };
 
 } // namespace nav_docking
