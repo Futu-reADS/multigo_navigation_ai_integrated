@@ -194,8 +194,8 @@ def generate_launch_description():
                 parameters=[
                     {"desired_aruco_marker_id": desired_aruco_marker_id_left},
                     {"marker_width": aurco_marker_width},
-                    {"camera_topic": "/camera/color/image_raw_left"},
-                    {"camera_info": "/camera/color/camera_info_left"}
+                    {"camera_topic": "/camera_left/color/image_raw"},
+                    {"camera_info": "/camera_left/color/camera_info"}
                 ],
                 remappings=[
                     ('aruco_detect/markers', 'aruco_detect/markers_left')
@@ -207,8 +207,8 @@ def generate_launch_description():
                 parameters=[
                     {"desired_aruco_marker_id": desired_aruco_marker_id_right},
                     {"marker_width": aurco_marker_width},
-                    {"camera_topic": "/camera/color/image_raw_right"},
-                    {"camera_info": "/camera/color/camera_info_right"}
+                    {"camera_topic": "/camera_right/color/image_raw"},
+                    {"camera_info": "/camera_left/color/camera_info"}
                 ],
                 remappings=[
                     ('aruco_detect/markers', 'aruco_detect/markers_right')
@@ -235,24 +235,25 @@ def generate_launch_description():
             
             # NAV DOCKING NODE
             Node(
-            package='nav_docking',
-            executable='nav_docking_node',
-            name='nav_docking_node',
-            parameters=[pid_params_file,
-                {"base_frame": "base_link"},
-                {"camera_left_frame": "camera_front_left_frame"},
-                {"camera_right_frame": "camera_front_right_frame"},
-                {"desired_aruco_marker_id_left": desired_aruco_marker_id_left},
-                {"desired_aruco_marker_id_right": desired_aruco_marker_id_right},
-                {"aruco_distance_offset": aruco_distance_offset},
-                {"aruco_left_right_offset": aruco_left_right_offset},
-                {"aruco_distance_offset_dual": aruco_distance_offset_dual},
-                {"aruco_center_offset_dual": aruco_center_offset_dual},
-                {"marker_topic_left": "aruco_detect/markers_left"},
-                {"marker_topic_right": "aruco_detect/markers_right"},
-            ],
-            remappings=[
-                ('goal_pose', 'goal_pose')]),    
+                package='nav_docking',
+                executable='nav_docking_node',
+                name='nav_docking_node',
+                parameters=[pid_params_file,
+                    {"base_frame": "base_link"},
+                    {"camera_left_frame": "camera_front_left_frame"},
+                    {"camera_right_frame": "camera_front_right_frame"},
+                    {"desired_aruco_marker_id_left": desired_aruco_marker_id_left},
+                    {"desired_aruco_marker_id_right": desired_aruco_marker_id_right},
+                    {"aruco_distance_offset": aruco_distance_offset},
+                    {"aruco_left_right_offset": aruco_left_right_offset},
+                    {"aruco_distance_offset_dual": aruco_distance_offset_dual},
+                    {"aruco_center_offset_dual": aruco_center_offset_dual},
+                    {"marker_topic_left": "aruco_detect/markers_left"},
+                    {"marker_topic_right": "aruco_detect/markers_right"},
+                ],
+                remappings=[
+                    ('goal_pose', 'goal_pose')]),  
+
         ]
     )
 
