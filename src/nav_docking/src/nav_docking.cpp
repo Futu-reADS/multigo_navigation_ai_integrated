@@ -146,21 +146,25 @@ namespace nav_docking
 
         Nav_docking::enable_callback = true;
         
-        if (goal_handle->is_canceling())
-        {
-            RCLCPP_INFO(this->get_logger(), "Goal canceled.");
-            goal_handle->canceled(result);
-            Nav_docking::enable_callback = false;
-            return;
-        }
+        
 
             // Provide feedback
 
 
-        if (stage_5_docking_status == false){
-            feedback->distance = static_cast<double>(aruco_distance_offset_dual);
+        while (stage_5_docking_status == false){
+
+            if (goal_handle->is_canceling())
+            {
+            RCLCPP_INFO(this->get_logger(), "Goal canceled.");
+            goal_handle->canceled(result);
+            Nav_docking::enable_callback = false;
+            return;
+            }
+
+            feedback->distance = static_cast<double>(prev_error_dist);
+            // feedback->distance = static_cast<double>(5.0);
             goal_handle->publish_feedback(feedback);
-            RCLCPP_INFO(this->get_logger(), "Feedback: distance = %.2f", feedback->distance);
+            RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 1000,   "Feedback: distance = %.2f", feedback->distance);
         }
         
         // Complete the goal
