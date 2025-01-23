@@ -217,10 +217,10 @@
         <visualize>true</visualize>
         <update_rate>10</update_rate>
         <camera name="intel_realsense_r200_front">
-          <horizontal_fov>1.3265</horizontal_fov>
+          <horizontal_fov>1.1519</horizontal_fov>
           <image>
-            <width>1600</width>
-            <height>1200</height>
+            <width>1280</width>
+            <height>720</height>
             <format>L8</format> <!-- grayscale -->
           </image>
           <clip>
@@ -234,13 +234,13 @@
           </noise>
         </camera>
           <plugin name="camera_driver_front" filename="libgazebo_ros_camera.so">
-          <frameName>camera_left_frame</frameName>
+          <frameName>camera_front_left_frame</frameName>
             <ros>
-              <remapping>/camera/camera_info:=/camera/color/camera_info_left</remapping>
-              <remapping>/camera/image_raw:=/camera/color/image_raw_left</remapping>
+              <remapping>/camera/camera_info:=/camera_left/color/camera_info</remapping>
+              <remapping>/camera/image_raw:=/camera_left/color/image_raw</remapping>
  
               <qos>
-                <topic name='/camera/color/image_raw_left'>
+                <topic name='/camera_left/color/image_raw'>
                   <publisher>
                     <reliability>reliable</reliability>
                   </publisher>
@@ -272,10 +272,10 @@
         <visualize>true</visualize>
         <update_rate>10</update_rate>
         <camera name="raspberry_pi_right">
-          <horizontal_fov>1.3265</horizontal_fov>
+          <horizontal_fov>1.1519</horizontal_fov>
           <image>
-            <width>1600</width>
-            <height>1200</height>
+            <width>1280</width>
+            <height>720</height>
             <format>L8</format> <!-- grayscale -->
           </image>
           <clip>
@@ -289,12 +289,12 @@
           </noise>
         </camera>
           <plugin name="camera_driver_right" filename="libgazebo_ros_camera.so">
-          <frameName>camera_right_frame</frameName>
+          <frameName>camera_front_right_frame</frameName>
             <ros>
-              <remapping>/camera/camera_info:=/camera/color/camera_info_right</remapping>
-              <remapping>/camera/image_raw:=/camera/color/image_raw_right</remapping>
+              <remapping>/camera/camera_info:=/camera_right/color/camera_info</remapping>
+              <remapping>/camera/image_raw:=/camera_right/color/image_raw</remapping>
               <qos>
-                <topic name='/camera/color/image_raw_right'>
+                <topic name='/camera_right/color/image_raw'>
                   <publisher>
                     <reliability>reliable</reliability>
                   </publisher>

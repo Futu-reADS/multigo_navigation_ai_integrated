@@ -23,10 +23,10 @@ namespace aruco_detect
         // RCLCPP_INFO_STREAM(this->get_logger(), "dictionary ID : " << dictionary);
 
         image_sub = this->create_subscription<sensor_msgs::msg::Image>(
-            camera_topic, 10, 
+            camera_topic, 1, 
             std::bind(&Aruco_detect::imageCallback, this, std::placeholders::_1));
         camera_info_sub = this->create_subscription<sensor_msgs::msg::CameraInfo>(
-            camera_info, 10, 
+            camera_info, 1, 
             std::bind(&Aruco_detect::cameraInfoCallback, this, std::placeholders::_1));
 
         pose_array_pub = this->create_publisher<geometry_msgs::msg::PoseArray>("aruco_detect/markers", 10);
@@ -93,7 +93,7 @@ namespace aruco_detect
             try
             {
                 cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::MONO8);
-                cv::resize(cv_ptr->image, cv_ptr->image, cv::Size(image_width, image_height));
+                // cv::resize(cv_ptr->image, cv_ptr->image, cv::Size(image_width, image_height));
             }
             catch (cv_bridge::Exception& e)
             {
@@ -112,6 +112,7 @@ namespace aruco_detect
         geometry_msgs::msg::Pose pose;
         tf2::Quaternion quat;
         geometry_msgs::msg::TransformStamped transformStamped;
+        current_time = this->now();
 
         // Prepare a PoseArray message to publish all marker poses
         geometry_msgs::msg::PoseArray pose_array_msg;
@@ -139,9 +140,8 @@ namespace aruco_detect
             {
                 if (markerIds[i] == desired_aruco_marker_id)
                 {
-                    pose_array_msg.header.stamp = this->get_clock()->now();
+                    pose_array_msg.header.stamp = current_time;
                     pose_array_msg.header.frame_id = "aruco_marker_" + std::to_string(markerIds[i]);
-                    // Draw the axis for each detected marker
                     cv::aruco::drawAxis(image, camera_matrix, dist_coeffs, rvecs[i], tvecs[i], marker_width);
 
                     // Left Right inverted tvecs[i][0]
@@ -158,11 +158,22 @@ namespace aruco_detect
                     pose.orientation.z = quat.z();
                     pose.orientation.w = quat.w();
 
-                    RCLCPP_INFO(this->get_logger(), "Marker ID: %d - Translation: [Left Right inverted %f, Height inverted %f, Distance %f], Rotation: [%f, %f, %f]",
-                        markerIds[i], tvecs[i][0], tvecs[i][1], tvecs[i][2], -rvecs[i][0], -rvecs[i][1], rvecs[i][2]);
+                    // Overlay the marker position text on the image
+                    std::ostringstream oss;
+                    oss << std::fixed << std::setprecision(2)
+                                        << "Marker ID: " << desired_aruco_marker_id 
+                                        << " Pos: (" 
+                                        << pose.position.x << ", " 
+                                        << pose.position.y << ", " 
+                                        << pose.position.z << ")";
+                    std::string position_text = oss.str();
+                    cv::putText(image, position_text, cv::Point(10, 80), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255, 0, 0), 1);
+
+                    // RCLCPP_INFO(this->get_logger(), "Marker ID: %d - Translation: [Left Right inverted %f, Height inverted %f, Distance %f], Rotation: [%f, %f, %f]",
+                    //     markerIds[i], tvecs[i][0], tvecs[i][1], tvecs[i][2], -rvecs[i][0], -rvecs[i][1], rvecs[i][2]);
 
                     // Broadcast the marker pose as a transform
-                    transformStamped.header.stamp = this->get_clock()->now();
+                    transformStamped.header.stamp = current_time;
                     transformStamped.header.frame_id = frame_id;  // Camera frame
                     transformStamped.child_frame_id = "aruco_marker_" + std::to_string(markerIds[i]);  // Marker ID as frame
                     transformStamped.transform.translation.x = pose.position.x;
@@ -172,9 +183,8 @@ namespace aruco_detect
                     transformStamped.transform.rotation.y = pose.orientation.y;
                     transformStamped.transform.rotation.z = pose.orientation.z;
                     transformStamped.transform.rotation.w = pose.orientation.w;
-                    // Broadcast the transform
+
                     tf_broadcaster->sendTransform(transformStamped);
-                    // Add the pose to the PoseArray
                     pose_array_msg.poses.push_back(pose);
                 }
             }
@@ -184,9 +194,23 @@ namespace aruco_detect
         }
         else 
         {
-            RCLCPP_WARN(this->get_logger(), "No markers detected.");
+            // RCLCPP_WARN(this->get_logger(), "No markers detected.");
         }
 
+        // Calculate FPS (frames per second)
+        float fps = 0.0f;
+        int weighted_avg = 10;
+        rclcpp::Duration duration_fps = (current_time - previous_time);
+        float duration = (duration_fps.seconds() + (previous_duration * (weighted_avg-1))) / weighted_avg;
+        if (duration > 0.0f) 
+            fps = 1.0f / duration;
+        previous_time = current_time;
+        previous_duration = duration;
+        std::ostringstream stream;
+        stream << std::fixed << std::setprecision(2) << fps;
+        std::string fps_text = "FPS: " + stream.str();
+        cv::putText(image, fps_text, cv::Point(10, 50), cv::FONT_HERSHEY_SIMPLEX, 
+                    0.5, cv::Scalar(255), 1); 
         // Display the image with detected markers and axes
         cv::imshow(window_name, image);
         cv::waitKey(1);

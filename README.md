@@ -82,7 +82,10 @@ Open a new terminal window and run these commands:
 ### Cloning Packages
 Open a new terminal window and run these commands:
 
-    git clone -b feature/wheelchair_docking https://github.com/Futu-reADS/multigo.git ##Changed to Futu-re repository link
+    git clone --recurse-submodules -b feature/wheelchair_docking_dual_cam https://github.com/Futu-reADS/multigo.git
+
+
+### Install
     
     cd ~/multigo
     rosdep update

@@ -587,7 +587,7 @@ namespace nav_docking
                 stage_5_docking_status = false;
 
                 // RCLCPP_INFO_STREAM(this->get_logger(), "side transform dist aruco_distance_offset_side: " << aruco_distance_offset_dual);
-                RCLCPP_INFO_STREAM(this->get_logger(), "dual transform dist error #####: " << error_dist);
+                // RCLCPP_INFO_STREAM(this->get_logger(), "dual transform dist error #####: " << error_dist);
                 // RCLCPP_INFO_STREAM(this->get_logger(), "side transform error_center #####: " << error_center);
                 // RCLCPP_INFO_STREAM(this->get_logger(), "dual transform error_rotation #####: " << error_rotation);
 
@@ -613,8 +613,8 @@ namespace nav_docking
                 twist_msg.angular.z = 0.0;
                 cmd_vel_pub->publish(twist_msg);
                 stage_5_docking_status = true;  // publish docking status
-                RCLCPP_INFO_STREAM(this->get_logger(), "DOCKING COMPLETE" << "error_dist: " << error_dist << 
-                                                                            "error_center: " << error_center);
+                // RCLCPP_INFO_STREAM(this->get_logger(), "DOCKING COMPLETE" << "error_dist: " << error_dist << 
+                //                                                             "error_center: " << error_center);
             }
 
         // RCLCPP_INFO_STREAM(this->get_logger(), "dual transform dist error #####: " << error_dist);
@@ -628,8 +628,6 @@ namespace nav_docking
             // RCLCPP_INFO_STREAM(this->get_logger(), "dual transform dist error #####: " << error_dist);
             // RCLCPP_INFO_STREAM(this->get_logger(), "dual transform center error #####: " << error_center);
             // RCLCPP_INFO_STREAM(this->get_logger(), "dual transform rotation error #####: " << error_rotation);
-
-
             // RCLCPP_INFO_STREAM(this->get_logger(), "dual transform dist error #####: " << error_dist);
             // RCLCPP_INFO_STREAM(this->get_logger(), "dual twist_pub:x: " << twist_msg.linear.x);
             // RCLCPP_INFO_STREAM(this->get_logger(), "dual left_marker_y: " << (left_marker_y - aruco_distance_offset_dual));

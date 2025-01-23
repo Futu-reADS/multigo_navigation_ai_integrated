@@ -62,7 +62,10 @@ namespace aruco_detect
         
         bool window_created = false;
         std::string window_name;
-
+        rclcpp::Time previous_time = this->now();
+        rclcpp::Time current_time = this->now();
+        double previous_duration;
+        
     };
 } // namespace aruco_detect
 

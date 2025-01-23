@@ -79,7 +79,6 @@ def generate_launch_description():
         'autostart', default_value='true',
         description='Automatically startup the nav2 stack')
 
-
     declare_use_respawn_cmd = DeclareLaunchArgument(
         'use_respawn', default_value='False',
         description='Whether to respawn if a node crashes. Applied when composition is disabled.')
@@ -106,8 +105,8 @@ def generate_launch_description():
         'config',  # Make sure the config directory exists
         'docking_pid_params.yaml'
     )
-    
-    
+
+
     # LOCALIZATION PARAMETERS
     lifecycle_nodes_localization = ['map_server',
                        'pointcloud_to_laserscan',
@@ -140,7 +139,7 @@ def generate_launch_description():
 
     remappings_rtabmap = [
         ('scan', '/scan_laserscan'),
-        ('cloud_in', '/scan_pointcloud'),
+        ('cloud_in', '/scan_filtered'),
         ('odom', '/odom'),
         ('map', '/map'),
         ('goal_pose', '/goal_pose'),
@@ -157,7 +156,7 @@ def generate_launch_description():
     with open(urdf_path, 'r') as infp:
         robot_description = infp.read()
 
-   
+
     # NAVIGATION PARAMS
     lifecycle_nodes_navigation = ['controller_server',
                        'smoother_server',
@@ -167,8 +166,7 @@ def generate_launch_description():
                        'waypoint_follower',
                        'velocity_smoother']
 
-    
-    
+
     ##### Group DOCKING NODES #####
     load_docking_nodes = GroupAction(
         actions=[
@@ -196,8 +194,8 @@ def generate_launch_description():
                 parameters=[
                     {"desired_aruco_marker_id": desired_aruco_marker_id_left},
                     {"marker_width": aurco_marker_width},
-                    {"camera_topic": "/camera/color/image_raw_left"},
-                    {"camera_info": "/camera/color/camera_info_left"}
+                    {"camera_topic": "/camera_left/color/image_raw"},
+                    {"camera_info": "/camera_left/color/camera_info"}
                 ],
                 remappings=[
                     ('aruco_detect/markers', 'aruco_detect/markers_left')
@@ -209,8 +207,8 @@ def generate_launch_description():
                 parameters=[
                     {"desired_aruco_marker_id": desired_aruco_marker_id_right},
                     {"marker_width": aurco_marker_width},
-                    {"camera_topic": "/camera/color/image_raw_right"},
-                    {"camera_info": "/camera/color/camera_info_right"}
+                    {"camera_topic": "/camera_right/color/image_raw"},
+                    {"camera_info": "/camera_left/color/camera_info"}
                 ],
                 remappings=[
                     ('aruco_detect/markers', 'aruco_detect/markers_right')
@@ -237,31 +235,29 @@ def generate_launch_description():
             
             # NAV DOCKING NODE
             Node(
-            package='nav_docking',
-            executable='nav_docking_node',
-            name='nav_docking_node',
-            parameters=[pid_params_file,
-                {"base_frame": "base_link"},
-                {"camera_left_frame": "camera_front_left_frame"},
-                {"camera_right_frame": "camera_front_right_frame"},
-                {"desired_aruco_marker_id_left": desired_aruco_marker_id_left},
-                {"desired_aruco_marker_id_right": desired_aruco_marker_id_right},
-                {"aruco_distance_offset": aruco_distance_offset},
-                {"aruco_left_right_offset": aruco_left_right_offset},
-                {"aruco_distance_offset_dual": aruco_distance_offset_dual},
-                {"aruco_center_offset_dual": aruco_center_offset_dual},
-                {"marker_topic_left": "aruco_detect/markers_left"},
-                {"marker_topic_right": "aruco_detect/markers_right"},
-            ],
-            remappings=[
-                ('goal_pose', 'goal_pose')]),
-            
-               
+                package='nav_docking',
+                executable='nav_docking_node',
+                name='nav_docking_node',
+                parameters=[pid_params_file,
+                    {"base_frame": "base_link"},
+                    {"camera_left_frame": "camera_front_left_frame"},
+                    {"camera_right_frame": "camera_front_right_frame"},
+                    {"desired_aruco_marker_id_left": desired_aruco_marker_id_left},
+                    {"desired_aruco_marker_id_right": desired_aruco_marker_id_right},
+                    {"aruco_distance_offset": aruco_distance_offset},
+                    {"aruco_left_right_offset": aruco_left_right_offset},
+                    {"aruco_distance_offset_dual": aruco_distance_offset_dual},
+                    {"aruco_center_offset_dual": aruco_center_offset_dual},
+                    {"marker_topic_left": "aruco_detect/markers_left"},
+                    {"marker_topic_right": "aruco_detect/markers_right"},
+                ],
+                remappings=[
+                    ('goal_pose', 'goal_pose')]),  
+
         ]
     )
 
-    
-    
+
     #####LOCALIZATION NODES #####
     load_localization_nodes = GroupAction(
         actions=[
@@ -277,31 +273,64 @@ def generate_launch_description():
                 arguments=['--ros-args', '--log-level', log_level],
                 remappings=remappings),
             
-            # Pointcloud filter
-            # Node(
-            #     package='pcl_ros',
-            #     executable='filter_crop_box_node',
-            #     name='crop_box_filter',
-            #     parameters=[os.path.join(boot_dir, 'config', 'ego_filter.yaml')],
-            #     remappings=[
-            #         ('input', 'scan_pointcloud'),
-            #         ('output', 'scan_filtered')
-            #     ],
-            #     # Add QoS settings to match the subscriber node
-            #     arguments=['--qos-reliability', 'reliable', '--qos-durability', 'transient_local']
-            # ),
+            # Robot state publisher
+            Node(
+                package='robot_state_publisher',
+                executable='robot_state_publisher',
+                name='robot_state_publisher',
+                namespace=namespace,
+                output='screen',
+                parameters=[{'use_sim_time': use_sim_time,
+                            'robot_description': robot_description}],
+                remappings=remappings),
             
-            #AMCL localization
-            # Node(
-            #     package='nav2_amcl',
-            #     executable='amcl',
-            #     name='amcl',
-            #     output='screen',
-            #     respawn=use_respawn,
-            #     respawn_delay=2.0,
-            #     parameters=[configured_params],
-            #     arguments=['--ros-args', '--log-level', log_level],
-            #     remappings=remappings),
+           # Pointcloud filter
+            Node(
+                package='ego_pcl_filter',
+                executable='ego_pcl_filter_node',
+                name='ego_pcl_filter_node',
+                parameters=[
+                            {'min_x': -0.20},
+                            {'max_x': 0.20},
+                            {'min_y': -0.15},
+                            {'max_y': 0.15},
+                            {'min_z': -0.3},
+                            {'max_z': 1.5},
+                            {'keep_organized': False},
+                            {'negative': True}, ## Negative parameter (set to True to keep data outside the box)
+                            {'input_frame': 'base_scan'},
+                            {'output_frame': 'base_link'},
+                            {'input_topic': 'scan_pointcloud'},
+                            {'output_topic': 'scan_filtered'}
+                            ],
+                # Add QoS settings to match the subscriber node
+                arguments=['--qos-reliability', 'reliable', '--qos-durability', 'transient_local']
+            ),
+            
+            # 3d pointcloud to 2d laserscan conversion
+            Node(
+                package='pointcloud_to_laserscan',
+                executable='pointcloud_to_laserscan_node',
+                name='pointcloud_to_laserscan',
+                parameters=[{
+                    'target_frame': 'base_link',
+                    'transform_tolerance': 0.01,
+                    'min_height': 0.1,
+                    'max_height': 3.0,
+                    'angle_min': -3.1416,  # -M_PI/2
+                    'angle_max': 3.1416,  # M_PI/2
+                    'angle_increment': 0.0087,  # M_PI/360.0
+                    'scan_time': 0.1,
+                    'range_min': 0.00023,
+                    'range_max': 40.0,
+                    'use_inf': True,
+                    'inf_epsilon': 1.0
+                }],
+                remappings=[
+                    ('cloud_in', 'scan_filtered'),
+                    ('scan', 'scan_laserscan')
+                ],
+            ),
             
             # Node lifecylce manager
             Node(
@@ -314,41 +343,6 @@ def generate_launch_description():
                             {'autostart': autostart},
                             {'node_names': lifecycle_nodes_localization}]),
 
-            # 3d pointcloud to 2d laserscan conversion
-            Node(
-                package='pointcloud_to_laserscan',
-                executable='pointcloud_to_laserscan_node',
-                name='pointcloud_to_laserscan',
-                parameters=[{
-                    'target_frame': 'base_link',
-                    'transform_tolerance': 0.01,
-                    'min_height': 0.0,
-                    'max_height': 3.0,
-                    'angle_min': -3.1416,  # -M_PI/2
-                    'angle_max': 3.1416,  # M_PI/2
-                    'angle_increment': 0.0087,  # M_PI/360.0
-                    'scan_time': 0.1,
-                    'range_min': 0.23,
-                    'range_max': 40.0,
-                    'use_inf': True,
-                    'inf_epsilon': 1.0
-                }],
-                remappings=[
-                    ('cloud_in', 'scan_pointcloud'),
-                    ('scan', 'scan_laserscan')
-                ],),
-            
-            # Robot state publisher
-            Node(
-                package='robot_state_publisher',
-                executable='robot_state_publisher',
-                name='robot_state_publisher',
-                namespace=namespace,
-                output='screen',
-                parameters=[{'use_sim_time': use_sim_time,
-                            'robot_description': robot_description}],
-                remappings=remappings),
-            
             # Timer action to delay RTAB-Map launch
             TimerAction(
                 period=delay_duration,
@@ -361,9 +355,22 @@ def generate_launch_description():
                         output='screen',
                         parameters=[parameters_rtabmap],
                         remappings=remappings_rtabmap,
-                        arguments=[])
-                ]),
-            
+                        arguments=[]
+                    ),
+                    
+                    #A MCL localization
+                    # Node(
+                    #     package='nav2_amcl',
+                    #     executable='amcl',
+                    #     name='amcl',
+                    #     output='screen',
+                    #     respawn=use_respawn,
+                    #     respawn_delay=2.0,
+                    #     parameters=[configured_params],
+                    #     arguments=['--ros-args', '--log-level', log_level],
+                    #     remappings=remappings),
+                ]
+            ),
         ]
     )
 
@@ -452,7 +459,7 @@ def generate_launch_description():
                             {'node_names': lifecycle_nodes_navigation}]),
         ]
     )
-    
+
     # Create the launch description and populate
     ld = LaunchDescription()
 
