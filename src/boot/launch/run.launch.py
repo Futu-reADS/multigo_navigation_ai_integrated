@@ -128,7 +128,8 @@ def generate_launch_description():
           'RGBD/NeighborLinkRefining':'True',
           'Grid/RangeMin':'0.5',
           'Grid/RangeMax':'10.0',
-          'Optimizer/GravitySigma':'0', # Disable imu constraints (we are already in 2D)
+          'Optimizer/Strategy': '1',  # Change this to '0' for TORO, '1' for g2o (or '2' for GTSAM)
+          'Optimizer/GravitySigma':'0',  # Disable gravity constraints since you are in 2D
           'Mem/RawDescriptorsKept':'true',
           'Grid/CellSize': '0.05',  # Larger cell size reduces the resolution
           # To use localization mode, 'Mem/IncrementalMemory':'false'
@@ -175,6 +176,7 @@ def generate_launch_description():
                 package='nav_control',
                 executable='nav_control_node',
                 name='nav_control_node',
+                output='screen',
                 parameters=[
                     {"input_topic": "cmd_vel_final"},
                     {"output_topic": "cmd_vel"},
@@ -191,6 +193,7 @@ def generate_launch_description():
                 package='aruco_detect',
                 executable='aruco_detect_node',
                 name='aruco_detect_left_node',
+                output='screen',
                 parameters=[
                     {"desired_aruco_marker_id": desired_aruco_marker_id_left},
                     {"marker_width": aurco_marker_width},
@@ -204,6 +207,7 @@ def generate_launch_description():
                 package='aruco_detect',
                 executable='aruco_detect_node',
                 name='aruco_detect_right_node',
+                output='screen',
                 parameters=[
                     {"desired_aruco_marker_id": desired_aruco_marker_id_right},
                     {"marker_width": aurco_marker_width},
@@ -216,28 +220,30 @@ def generate_launch_description():
             
             
             # NAV2 GOAL PUB NODE
-            #Node(
-            #    package='nav_goal',
-            #    executable='nav_goal_node',
-            #    name='nav_goal_node',
-            #    parameters=[
-            #        {"map_frame": "map"},
-            #        {"camera_front_left_frame": "camera_front_left_frame"},
-            #        {"camera_front_right_frame": "camera_front_right_frame"},
-            #        {"desired_aruco_marker_id_left": desired_aruco_marker_id_left},
-            #        {"desired_aruco_marker_id_right": desired_aruco_marker_id_right},
-            #        {"aruco_distance_offset": -nav2_distance_offset},
-            #        {"aruco_left_right_offset": -aruco_left_right_offset},
-            #        {"marker_topic_front_left": "/aruco_detect/markers_left"},
-            #        {"marker_topic_front_right": "/aruco_detect/markers_right"},
-            #    ],
-            #    remappings=[('goal_pose', 'goal_pose')]),
+            Node(
+                package='nav_goal',
+                executable='nav_goal_node',
+                name='nav_goal_node',
+                output='screen',
+                parameters=[
+                    {"map_frame": "map"},
+                    {"camera_front_left_frame": "camera_front_left_frame"},
+                    {"camera_front_right_frame": "camera_front_right_frame"},
+                    {"desired_aruco_marker_id_left": desired_aruco_marker_id_left},
+                    {"desired_aruco_marker_id_right": desired_aruco_marker_id_right},
+                    {"aruco_distance_offset": -nav2_distance_offset},
+                    {"aruco_left_right_offset": -aruco_left_right_offset},
+                    {"marker_topic_front_left": "/aruco_detect/markers_left"},
+                    {"marker_topic_front_right": "/aruco_detect/markers_right"},
+                ],
+                remappings=[('goal_pose', 'goal_pose')]),
             
             # NAV DOCKING NODE
             Node(
                 package='nav_docking',
                 executable='nav_docking_node',
                 name='nav_docking_node',
+                output='screen',
                 parameters=[pid_params_file,
                     {"base_frame": "base_link"},
                     {"camera_left_frame": "camera_front_left_frame"},
@@ -352,10 +358,10 @@ def generate_launch_description():
                         package='rtabmap_slam',
                         executable='rtabmap',
                         name='rtabmap_localizer',
-                        output='screen',
+                        output='log',
                         parameters=[parameters_rtabmap],
                         remappings=remappings_rtabmap,
-                        arguments=[]
+                        arguments=['--ros-args', '--log-level', 'error']
                     ),
                     
                     #A MCL localization
