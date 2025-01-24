@@ -82,7 +82,7 @@ Open a new terminal window and run these commands:
 ### Cloning Packages
 Open a new terminal window and run these commands:
 
-    git clone --recurse-submodules -b feature/wheelchair_docking_dual_cam https://github.com/Futu-reADS/multigo.git
+    git clone --recurse-submodules -b dev/okinawa_docking_test https://github.com/Futu-reADS/multigo.git
     cd ~/multigo
     vcs import src < multigo.repos --recursive
     vcs pull src
