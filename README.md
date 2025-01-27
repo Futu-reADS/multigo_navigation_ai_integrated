@@ -95,24 +95,6 @@ Open a new terminal window and run these commands:
     rosdep install --from-paths src --ignore-src -r -y
     colcon build --symlink-install
 
-~~Open model folder and move multigo and wheelchair models to .gazebo/models folder: ~~
-
-
-~~    cp -r models/multigo models/wheelchair ~/.gazebo/models/~~
-
-
-~~### Changes to .bashrc file~~
-~~Add the correct world and model path when Gazebo launches:~~
-
-~~    echo 'export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/opt/ros/humble/share/turtlebot3_gazebo/models' >> ~/.bashrc~~
-    
-~~Open .bashrc file and comment the line:~~
-
-~~    export ROS_DOMAIN_ID=30 #TURTLEBOT3~~
-
-~~by adding a # in front of it:~~
-
-~~    #export ROS_DOMAIN_ID=30 #TURTLEBOT3~~
 
 Close all terminals and reopen them for the following:
 
