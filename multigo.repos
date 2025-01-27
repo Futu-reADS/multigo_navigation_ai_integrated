@@ -2,9 +2,9 @@ repositories:
  master:
     type: git
     url: git@github.com:Futu-reADS/multigo_master.git
-    version: main
+    version: dev/okinawa_docking_test
     
  boot:
     type: git
     url: git@github.com:Futu-reADS/multigo_launch.git
-    version: main
+    version: dev/okinawa_docking_test
