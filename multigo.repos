@@ -1,5 +1,5 @@
 repositories:
- mg_master:
+ master:
     type: git
     url: git@github.com:Futu-reADS/multigo_master.git
     version: main
