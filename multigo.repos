@@ -1,7 +1,7 @@
 repositories:
  mg_master:
     type: git
-    url: git@github.com:Futu-reADS/mg_master.git
+    url: git@github.com:Futu-reADS/multigo_master.git
     version: main
     
  boot:
