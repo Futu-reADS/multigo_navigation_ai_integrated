@@ -72,12 +72,13 @@ Open a new terminal window and run these commands:
 	sudo apt update
 	sudo apt install ros-humble-pcl-conversions ros-humble-pcl-msgs python3-pip
 	pip3 install pyyaml
+ 	pip install pyserial
+	sudo apt install python3-serial
 	sudo apt install ros-$ROS_DISTRO-rtabmap-ros
  	sudo apt-get install ros-humble-pcl-ros
  	sudo apt install ros-humble-rtabmap-slam
  	sudo apt install ros-humble-pointcloud-to-laserscan
 	sudo apt update
-
 
 ### Cloning Packages
 Open a new terminal window and run these commands:
