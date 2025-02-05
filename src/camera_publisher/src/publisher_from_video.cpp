@@ -64,6 +64,7 @@ int main(int argc, char **argv)
   std::string frame_id;
   int desired_fps;
   bool force_desired_fps = false;
+  int focus_value = -1;
   // Declare parameters with default values
   node->declare_parameter<std::string>("camera_calib_file", calib_file_path);
   node->declare_parameter<int>("camera_index", 0);
@@ -85,7 +86,7 @@ int main(int argc, char **argv)
   camera_info_msg->header.frame_id = frame_id; // Set to ID from launch file.
   // Open video capture
   int video_source = camera_index;
-  cv::VideoCapture cap(video_source);
+  cv::VideoCapture cap(video_source, cv::CAP_V4L2);
   if (!cap.isOpened()) 
   {
     RCLCPP_ERROR(node->get_logger(), "Failed to open video source at index %d.", video_source);
@@ -96,6 +97,7 @@ int main(int argc, char **argv)
   cap.set(cv::CAP_PROP_FRAME_WIDTH, camera_info_msg->width);
   cap.set(cv::CAP_PROP_FRAME_HEIGHT, camera_info_msg->height);
   cap.set(cv::CAP_PROP_BUFFERSIZE, 1); 
+  cap.set(cv::CAP_PROP_FOCUS, focus_value);
   // cap.set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'));
 
   RCLCPP_INFO(node->get_logger(), "Camera Index: %u", video_source);
