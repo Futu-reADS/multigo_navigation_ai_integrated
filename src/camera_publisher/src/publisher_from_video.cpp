@@ -86,7 +86,7 @@ int main(int argc, char **argv)
   camera_info_msg->header.frame_id = frame_id; // Set to ID from launch file.
   // Open video capture
   int video_source = camera_index;
-  cv::VideoCapture cap(video_source); //, cv::CAP_V4L2);
+  cv::VideoCapture cap(video_source, cv::CAP_V4L2);
   if (!cap.isOpened()) 
   {
     RCLCPP_ERROR(node->get_logger(), "Failed to open video source at index %d.", video_source);
@@ -98,7 +98,7 @@ int main(int argc, char **argv)
   cap.set(cv::CAP_PROP_FRAME_HEIGHT, camera_info_msg->height);
   cap.set(cv::CAP_PROP_BUFFERSIZE, 1); 
   cap.set(cv::CAP_PROP_FOCUS, focus_value);
-  // cap.set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'));
+  cap.set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'));
 
   RCLCPP_INFO(node->get_logger(), "Camera Index: %u", video_source);
   RCLCPP_INFO(node->get_logger(), "Requested Camera width: %u", camera_info_msg->width);
