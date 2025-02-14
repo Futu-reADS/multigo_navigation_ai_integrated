@@ -14,6 +14,9 @@ find_package(visualization_msgs REQUIRED)
 find_package(image_transport REQUIRED)
 find_package(tf2 REQUIRED)
 
+find_package(nav_interface REQUIRED)
+find_package(rclcpp_action REQUIRED)
+find_package(rclcpp_components REQUIRED)
 
 
 set(THIS_PACKAGE_INCLUDE_DEPENDS
@@ -30,6 +33,9 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
     aruco_msgs
     sensor_msgs
     visualization_msgs
+    rclcpp_action
+    rclcpp_components
+    nav_interface
 )
 
 include_directories(
@@ -49,6 +55,10 @@ ament_target_dependencies(nav_goal_node
   tf2_ros
   tf2_geometry_msgs
   cv_bridge  # Added cv_bridge dependency
+
+  "nav_interface"
+  "rclcpp_action"
+  "rclcpp_components"
 )
 
 # Link OpenCV libraries

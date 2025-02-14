@@ -5,6 +5,15 @@ namespace nav_goal
     Nav_goal::Nav_goal()
         : Node("nav_goal")
     {
+
+        action_server_ = rclcpp_action::create_server<Approach>(
+            this,
+            "approach",
+            std::bind(&Nav_goal::handle_goal, this, std::placeholders::_1, std::placeholders::_2),
+            std::bind(&Nav_goal::handle_cancel, this, std::placeholders::_1),
+            std::bind(&Nav_goal::handle_accepted, this, std::placeholders::_1));
+
+
         this->set_parameter(rclcpp::Parameter("use_sim_time", false));
         // Declare node parameters
         this->declare_parameter<std::string>("map_frame", "map");
@@ -50,6 +59,85 @@ namespace nav_goal
         std::bind(&Nav_goal::frontMarkerGoalPublisher, this));
     }
 
+    // TEST================================================================================================================BEGIN
+
+    rclcpp_action::GoalResponse Nav_goal::handle_goal(
+        const rclcpp_action::GoalUUID &uuid,
+        std::shared_ptr<const Approach::Goal> goal)
+    {
+        RCLCPP_INFO(this->get_logger(), "Received a goal request with approach_request: %d", goal->approach_request);
+
+
+        // Validate the goal
+        if (goal->approach_request)
+        {
+            RCLCPP_INFO(this->get_logger(), "Goal accepted.");
+            return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
+        }
+        else
+        {
+            RCLCPP_WARN(this->get_logger(), "Goal rejected.");
+            return rclcpp_action::GoalResponse::REJECT;
+        }
+    }
+
+    rclcpp_action::CancelResponse Nav_goal::handle_cancel(
+        const std::shared_ptr<GoalHandleApproach> goal_handle)
+    {
+        RCLCPP_INFO(this->get_logger(), "Received a request to cancel the goal.");
+        return rclcpp_action::CancelResponse::ACCEPT;
+    }
+
+    void Nav_goal::handle_accepted(const std::shared_ptr<GoalHandleApproach> goal_handle)
+    {
+        // Start a new thread to execute the goal
+        std::thread{std::bind(&Nav_goal::execute, this, goal_handle)}.detach();
+    }
+
+    void Nav_goal::execute(const std::shared_ptr<GoalHandleApproach> goal_handle)
+    {
+        RCLCPP_INFO(this->get_logger(), "Executing goal...");
+
+        const auto goal = goal_handle->get_goal();
+        auto feedback = std::make_shared<Approach::Feedback>();
+        auto result = std::make_shared<Approach::Result>();
+
+        Nav_goal::enable_callback = true;
+        
+        
+
+            // Provide feedback
+
+
+        while (stage_3_docking_status == false){
+
+            if (goal_handle->is_canceling())
+            {
+            RCLCPP_INFO(this->get_logger(), "Goal canceled.");
+            goal_handle->canceled(result);
+            Nav_goal::enable_callback = false;
+            return;
+            }
+
+            feedback->wheelchair_distance = static_cast<double>(goal_distance_threshold);
+            // feedback->distance = static_cast<double>(5.0);
+            goal_handle->publish_feedback(feedback);
+            RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 1000,   "Feedback: distance = %.2f", feedback->wheelchair_distance);
+        }
+        
+        // Complete the goal
+        if (stage_3_docking_status == true){
+            result->approach_success = true;
+            goal_handle->succeed(result);
+            RCLCPP_INFO(this->get_logger(), "Goal succeeded.");
+            Nav_goal::enable_callback = false;
+        }       
+        
+    }
+
+
+    // TEST======================================================================================================END
+
     int Nav_goal::extractMarkerIds(const geometry_msgs::msg::PoseArray::SharedPtr& pose_array_msg)
     {
         std::string frame_id = pose_array_msg->header.frame_id;
@@ -74,6 +162,7 @@ namespace nav_goal
 
     void Nav_goal::arucoPoseCallbackLeft(const geometry_msgs::msg::PoseArray::SharedPtr msg)
     {
+        if(Nav_goal::enable_callback == false) return;
         geometry_msgs::msg::TransformStamped cameraToMap;
         this->get_parameter("desired_aruco_marker_id_left", desired_aruco_marker_id_left);
         this->get_parameter("aruco_distance_offset", aruco_distance_offset);
@@ -158,6 +247,7 @@ namespace nav_goal
 
     void Nav_goal::arucoPoseCallbackRight(const geometry_msgs::msg::PoseArray::SharedPtr msg)
     {
+        if(Nav_goal::enable_callback == false) return;
         geometry_msgs::msg::TransformStamped cameraToMap;
         this->get_parameter("desired_aruco_marker_id_right", desired_aruco_marker_id_right);
         this->get_parameter("aruco_distance_offset", aruco_distance_offset);

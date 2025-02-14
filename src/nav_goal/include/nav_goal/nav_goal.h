@@ -14,6 +14,10 @@
 #include <regex>
 #include <vector>
 
+#include "nav_interface/action/approach.hpp"
+#include "rclcpp_action/rclcpp_action.hpp"
+#include "rclcpp_components/register_node_macro.hpp"
+
 
 namespace nav_goal
 {
@@ -23,6 +27,27 @@ namespace nav_goal
         Nav_goal();
 
     private:
+
+        bool enable_callback = false;
+
+        using Approach = nav_interface::action::Approach;
+        using GoalHandleApproach = rclcpp_action::ServerGoalHandle<Approach>;
+
+        // Action server
+        rclcpp_action::Server<Approach>::SharedPtr action_server_;
+
+        // Goal handling methods
+        rclcpp_action::GoalResponse handle_goal(const rclcpp_action::GoalUUID &uuid,
+                                                std::shared_ptr<const Approach::Goal> goal);
+
+        rclcpp_action::CancelResponse handle_cancel(const std::shared_ptr<GoalHandleApproach> goal_handle);
+
+        void handle_accepted(const std::shared_ptr<GoalHandleApproach> goal_handle);
+
+        // Execution of the goal
+        void execute(const std::shared_ptr<GoalHandleApproach> goal_handle);
+
+
 
         void arucoPoseCallbackLeft(const geometry_msgs::msg::PoseArray::SharedPtr msg);
         void arucoPoseCallbackRight(const geometry_msgs::msg::PoseArray::SharedPtr msg);

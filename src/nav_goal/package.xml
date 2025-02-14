@@ -18,6 +18,10 @@
   <depend>cv_bridge</depend>  <!-- Added cv_bridge dependency -->
   <depend>opencv</depend>  <!-- Added OpenCV dependency -->
 
+  <depend>nav_interface</depend>
+  <depend>rclcpp_action</depend>
+  <depend>rclcpp_components</depend>
+
   <!-- Testing dependencies -->
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
