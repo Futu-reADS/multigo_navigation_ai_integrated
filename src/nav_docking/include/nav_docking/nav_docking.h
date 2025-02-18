@@ -47,8 +47,6 @@ namespace nav_docking
         // Execution of the goal
         void execute(const std::shared_ptr<GoalHandleDock> goal_handle);
         
-
-        void arucoPoseFrontCallback(const geometry_msgs::msg::PoseArray::SharedPtr msg);
         void arucoPoseLeftCallback(const geometry_msgs::msg::PoseArray::SharedPtr msg);
         void arucoPoseRightCallback(const geometry_msgs::msg::PoseArray::SharedPtr msg);
         int extractMarkerIds(const geometry_msgs::msg::Pose& pose, const std::string& frame_id);
@@ -56,7 +54,7 @@ namespace nav_docking
                                double kp, double ki, double kd, double callback_duration, 
                                double max_output, double min_output, double min_error);
         void frontMarkerCmdVelPublisher();
-        void sideMarkerCmdVelPublisher();
+        void dualMarkerCmdVelPublisher();
         // TF buffer and listener
         std::shared_ptr<tf2_ros::Buffer> tf_buffer;
         std::shared_ptr<tf2_ros::TransformListener> tf_listener;
@@ -93,11 +91,9 @@ namespace nav_docking
         int desired_aruco_marker_id_left;
         int desired_aruco_marker_id_right;
 
-        float docking_y_axis_threshold = 0.025;
+        float docking_y_axis_threshold = 0.015;
 
         // Marker variables
-        tf2::Vector3 front_transformed_marker_t;
-        double front_roll, front_pitch, front_yaw;
         tf2::Vector3 left_transformed_marker_t;
         double left_roll, left_pitch, left_yaw, prev_yaw;
 

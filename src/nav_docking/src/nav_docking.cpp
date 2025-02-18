@@ -98,8 +98,7 @@ namespace nav_docking
 
         side_timer_ = this->create_wall_timer(
         period,
-        std::bind(&Nav_docking::sideMarkerCmdVelPublisher, this));
-
+        std::bind(&Nav_docking::dualMarkerCmdVelPublisher, this));
     }
 
     //============================================TESTING BEGIN==============================================//
@@ -144,6 +143,8 @@ namespace nav_docking
         const auto goal = goal_handle->get_goal();
         auto feedback = std::make_shared<Dock::Feedback>();
         auto result = std::make_shared<Dock::Result>();
+        stage_4_docking_status = false;
+        stage_5_docking_status = false;
 
         Nav_docking::enable_callback = true;
         
@@ -232,70 +233,6 @@ namespace nav_docking
         }
         
         return marker_id;
-    }
-
-
-    void Nav_docking::arucoPoseFrontCallback(const geometry_msgs::msg::PoseArray::SharedPtr msg)
-    {
-        geometry_msgs::msg::TransformStamped cameraToBase_link;
-        this->get_parameter("desired_aruco_marker_id_left", desired_aruco_marker_id_left);
-        this->get_parameter("aruco_distance_offset", aruco_distance_offset);
-        this->get_parameter("aruco_left_right_offset", aruco_left_right_offset);
-        try
-        {
-            //  Aruco marker to the base_link
-            cameraToBase_link = tf_buffer->lookupTransform(base_frame, camera_left_frame, tf2::TimePointZero, tf2::durationFromSec(2));
-
-            for (int i = 0; i < msg->poses.size(); i++)
-            {
-                found_aruco_marker_id_left = extractMarkerIds(msg->poses[i], msg->header.frame_id);  // Extract marker ID from frame
-                // RCLCPP_INFO(rclcpp::get_logger("MarkerIDLogger"), "Detected marker ID: %d", found_aruco_marker_id_left);
-                // RCLCPP_INFO(rclcpp::get_logger("MarkerIDLogger"), "desiredmarker ID: %d", desired_aruco_marker_id_left);
-
-                if (found_aruco_marker_id_left == desired_aruco_marker_id_left)  // Check if aruco makrer matches desired marker
-                {
-                    marker_time_left = this->now();
-                    double marker_tx = msg->poses[i].position.x;
-                    double marker_ty = msg->poses[i].position.y;
-                    double marker_tz = msg->poses[i].position.z;
-
-                    double marker_rx = msg->poses[i].orientation.x;
-                    double marker_ry = msg->poses[i].orientation.y;
-                    double marker_rz = msg->poses[i].orientation.z;
-                    double marker_rw = msg->poses[i].orientation.w;
-
-                    tf2::Quaternion camera_q(
-                        cameraToBase_link.transform.rotation.x,
-                        cameraToBase_link.transform.rotation.y,
-                        cameraToBase_link.transform.rotation.z,
-                        cameraToBase_link.transform.rotation.w);
-
-                    tf2::Transform camera_transform(camera_q, tf2::Vector3(
-                        cameraToBase_link.transform.translation.x,
-                        cameraToBase_link.transform.translation.y,
-                        cameraToBase_link.transform.translation.z));
-
-                    tf2::Vector3 marker_t(marker_tx, marker_ty, marker_tz);
-                    // Save marker transform x y z
-                    front_transformed_marker_t = camera_transform * marker_t;
-
-                    // Combine orientations
-                    tf2::Quaternion marker_q(marker_rx, marker_ry, marker_rz, marker_rw);
-                    tf2::Quaternion combined_q = camera_q * marker_q;  // Quaternion multiplication
-                    tf2::Quaternion final_q = combined_q; // First combined orientation, then yaw adjustment
-                    tf2::Matrix3x3(final_q).getRPY(front_roll, front_pitch, front_yaw);
-                } // end of if for matching marker ids
-            } // end of for loop
-            // RCLCPP_INFO_STREAM(rclcpp::get_logger("nav_docking"), "frame ID: " << msg->header.frame_id);
-        }  // end of try
-        catch (tf2::TransformException &ex)
-        {
-            std::stringstream message;
-            message << "Could not transform aruco_" << desired_aruco_marker_id_left << " to base_link: " << ex.what();
-            RCLCPP_WARN(this->get_logger(), "%s", message.str().c_str());
-            return;
-        }
-
     }
 
     void Nav_docking::arucoPoseLeftCallback(const geometry_msgs::msg::PoseArray::SharedPtr msg)
@@ -444,7 +381,6 @@ namespace nav_docking
         callback_duration_right = duration.seconds();  // seconds as a double
         // RCLCPP_INFO(this->get_logger(), "front camera callback_duration: %f", callback_duration_left);
 
-        // stage_4_docking_status = true;
         // Calculate the error
 
         if (callback_duration_left < callback_duration_right)
@@ -454,8 +390,7 @@ namespace nav_docking
             marker_z = left_transformed_marker_t.z();
             error_x = marker_x - aruco_distance_offset;
             error_y = marker_y - aruco_left_right_offset;
-            error_left_yaw = -left_yaw;
-            // RCLCPP_INFO(this->get_logger(), "left_yaw: %f", error_left_yaw );
+            error_left_yaw = left_yaw;
         }
         else 
         {
@@ -464,9 +399,12 @@ namespace nav_docking
             marker_z = right_transformed_marker_t.z();
             error_x = marker_x - aruco_distance_offset;
             error_y = marker_y + aruco_left_right_offset;
-            error_left_yaw = -right_yaw;
-            // RCLCPP_INFO(this->get_logger(), "right_yaw: %f", error_left_yaw );
+            error_left_yaw = right_yaw;
         }
+        // // Right yaw 
+        // RCLCPP_WARN(this->get_logger(), "right_yaw: %f", right_yaw);
+        // // Left yaw
+        // RCLCPP_WARN(this->get_logger(), "left_yaw: %f", left_yaw);
 
         if ((callback_duration_left < marker_delay_threshold_sec || callback_duration_right < marker_delay_threshold_sec) &&
              stage_4_docking_status == false) // Check for marker delay and status
@@ -524,14 +462,12 @@ namespace nav_docking
             cmd_vel_pub->publish(twist_msg);
             // RCLCPP_INFO_STREAM(this->get_logger(), "PAUSE 0 DELAY too long or status " << stage_4_docking_status);
         }
-
         prev_error_x = error_x;
         prev_error_y = error_y;
         prev_error_left_yaw = error_left_yaw;
-
     }
 
-    void Nav_docking::sideMarkerCmdVelPublisher()
+    void Nav_docking::dualMarkerCmdVelPublisher()
     {
         if(Nav_docking::enable_callback == false) return;
         rclcpp::Time current_time = this->now();
@@ -584,15 +520,12 @@ namespace nav_docking
                 // RCLCPP_INFO_STREAM(this->get_logger(), "side transform error_center #####: " << error_center);
                 // RCLCPP_INFO_STREAM(this->get_logger(), "dual transform error_rotation #####: " << error_rotation);
 
-                
-
                 // RCLCPP_INFO_STREAM(this->get_logger(), "twist_pub:y: " << twist_msg.linear.y);
                 // RCLCPP_INFO_STREAM(this->get_logger(), "dual twist_pub:anglular Z: " << twist_msg.angular.z);
                 // RCLCPP_INFO_STREAM(this->get_logger(), "dual right_marker_x: " << right_marker_x);
                 // RCLCPP_INFO_STREAM(this->get_logger(), "dual left_marker_x: " << left_marker_x);
                 // RCLCPP_INFO_STREAM(this->get_logger(), "dual transform error_center #####: " << error_center);
                 // RCLCPP_INFO_STREAM(this->get_logger(), "dual twist_pub:y: " << twist_msg.linear.y);
-
 
                 // RCLCPP_INFO_STREAM(this->get_logger(), "dual right_marker_y: " << right_marker_y);
                 // RCLCPP_INFO_STREAM(this->get_logger(), "dual left_marker_y: " << left_marker_y);
@@ -630,7 +563,6 @@ namespace nav_docking
             RCLCPP_INFO_STREAM(this->get_logger(), "------- DOCKING COMPLETE ------");
             cmd_vel_pub->publish(twist_msg);
         }
-
         prev_error_dist = error_dist;
         prev_error_center = error_center;
         prev_error_rotation = error_rotation;
