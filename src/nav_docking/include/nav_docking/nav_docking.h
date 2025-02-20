@@ -29,6 +29,7 @@ namespace nav_docking
     private:
 
         bool enable_callback = false;
+        double feedback_distance;
 
         using Dock = nav_interface::action::Dock;
         using GoalHandleDock = rclcpp_action::ServerGoalHandle<Dock>;

@@ -159,7 +159,7 @@ namespace nav_docking
             return;
             }
 
-            feedback->distance = static_cast<double>(prev_error_dist);
+            feedback->distance = static_cast<double>(feedback_distance);
             // feedback->distance = static_cast<double>(5.0);
             goal_handle->publish_feedback(feedback);
             RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 1000,   "Feedback: distance = %.2f", feedback->distance);
@@ -368,6 +368,7 @@ namespace nav_docking
             callback_duration_left = duration_left.seconds();  // seconds as a double
             callback_duration_right = duration_right.seconds();  // seconds as a double
             callback_duration = std::max(callback_duration_left, callback_duration_right);
+            this->feedback_distance = error_x;
 
             // Calculate the error
             if (callback_duration < marker_delay_threshold_sec)  // Use dual markers. 
@@ -486,6 +487,7 @@ namespace nav_docking
             double error_dist = distance - aruco_distance_offset_dual; // distance - aruco_distance_offset_dual;
             double error_center = center - aruco_center_offset_dual;
             double error_rotation = rotation;
+            this->feedback_distance = error_dist;
 
             // Check for marker delay and status
             if (callback_duration_dual < marker_delay_threshold_sec)
