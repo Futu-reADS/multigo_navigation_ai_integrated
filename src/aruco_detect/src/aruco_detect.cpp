@@ -109,7 +109,6 @@ namespace aruco_detect
         std::vector<std::vector<cv::Point2f>> markerCorners;
         std::vector<cv::Vec3d> rvecs, tvecs;
         geometry_msgs::msg::Pose pose;
-        tf2::Quaternion quat;
         geometry_msgs::msg::TransformStamped transformStamped;
         current_time = this->now();
 
@@ -147,8 +146,36 @@ namespace aruco_detect
                     pose.position.x = tvecs[i][2];
                     pose.position.y = -tvecs[i][0];
                     pose.position.z = tvecs[i][1];
-                    // Convert the rotation vector (rvecs[i]) to a quaternion (assuming rvecs[i] contains roll, pitch, yaw)
-                    quat.setRPY(rvecs[i][0], rvecs[i][1], rvecs[i][2]);  // Roll, Pitch, Yaw
+
+                    // Convert rotation vector to rotation matrix
+                    cv::Mat rotation_matrix;
+                    cv::Rodrigues(rvecs[i], rotation_matrix);
+                    // Ensure the matrix is in double precision
+                    if (rotation_matrix.type() != CV_64F)
+                        rotation_matrix.convertTo(rotation_matrix, CV_64F);
+                    // Convert rotation matrix to Eigen::Matrix3d
+                    Eigen::Matrix3d rot;
+                    for (int row = 0; row < 3; ++row)
+                    {
+                        for (int col = 0; col < 3; ++col)
+                        {
+                            rot(row, col) = rotation_matrix.at<double>(row, col);
+                        }
+                    }
+                    // Define the conversion from the camera (OpenCV) coordinate system to the ROS coordinate system
+                    Eigen::Matrix3d cv_to_ros;
+                    cv_to_ros << 0,  0, 1,
+                                -1, 0, 0,
+                                0,-1, 0;
+                    // Apply the full coordinate transformation (sandwich transformation)
+                    rot = cv_to_ros * rot * cv_to_ros.transpose();
+                    // Convert the transformed rotation matrix to quaternion using Eigen
+                    Eigen::Quaterniond eigen_quat(rot);
+                    tf2::Quaternion quat(eigen_quat.x(), eigen_quat.y(), eigen_quat.z(), eigen_quat.w());
+                    // Additional 180° roll rotation offset (roll around x-axis)
+                    tf2::Quaternion offset;
+                    offset.setRPY(0, M_PI, 0);  // 180° in radians
+                    quat = quat * offset;
                     quat.normalize();
                     // Set the quaternion to the pose orientation
                     pose.orientation.x = quat.x();

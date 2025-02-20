@@ -19,8 +19,8 @@
 #include "geometry_msgs/msg/pose.hpp"
 #include "geometry_msgs/msg/pose_array.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
-
-
+#include <eigen3/Eigen/Dense>
+#include <eigen3/Eigen/Geometry>
 
 namespace aruco_detect
 {
