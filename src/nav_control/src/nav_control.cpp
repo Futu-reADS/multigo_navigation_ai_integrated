@@ -8,7 +8,7 @@ namespace nav_control
         // Declare node parameters
         this->declare_parameter<std::string>("input_topic", "input_topic");
         this->declare_parameter<std::string>("output_topic", "output_topic");
-        this->declare_parameter<std::string>("mode_drive", "SOLO");
+        this->declare_parameter<std::string>("mode_drive", "COMBINE_CHAIR");
         this->declare_parameter<float>("LENGTH_ROTATION_CENTER_SOLO", 0.0);
         this->declare_parameter<float>("LENGTH_ROTATION_CENTER_DOCKING", 0.25);
         this->declare_parameter<float>("LENGTH_ROTATION_CENTER_COMBINE_CHAIR", 0.5);
@@ -46,6 +46,13 @@ namespace nav_control
         return LENGTH_ROTATION_CENTER;
     }
 
+    // Function to clamp values
+    double Nav_control::clamp_velocity(double value)
+    {
+        if (value == 0.0) return 0.0;
+        return std::max(-max_speed, std::min(max_speed, value));
+    }
+
     void Nav_control::cmd_velCallback(const geometry_msgs::msg::Twist::SharedPtr msg)
     {
         geometry_msgs::msg::Vector3 linear_vel_msg;
@@ -62,13 +69,17 @@ namespace nav_control
             RCLCPP_INFO_STREAM(rclcpp::get_logger("LENGTH_ROTATION_CENTER: "), mode_drive << ": " << LENGTH_ROTATION_CENTER);
         }
 
-        linear_vel_msg.x = msg->linear.x;
-        linear_vel_msg.y = (-msg->angular.z * LENGTH_ROTATION_CENTER) + msg->linear.y;
+        double x = clamp_velocity(msg->linear.x);
+        double y = clamp_velocity(msg->linear.y);
+        double z = clamp_velocity(msg->angular.z);
+
+        linear_vel_msg.x = x;
+        linear_vel_msg.y = (-z * LENGTH_ROTATION_CENTER) + y;
         linear_vel_msg.z = 0.0;
 
         angular_vel_msg.x = 0.0;
         angular_vel_msg.y = 0.0;
-        angular_vel_msg.z = msg->angular.z;
+        angular_vel_msg.z = z;
 
         vel_msg.linear = linear_vel_msg;
         vel_msg.angular = angular_vel_msg;

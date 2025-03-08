@@ -8,6 +8,7 @@
 #include <vector>
 
 
+
 namespace nav_control
 {
     class Nav_control : public rclcpp::Node
@@ -17,6 +18,7 @@ namespace nav_control
     private:
         float rotationCenter(std::string mode_drive);
         void cmd_velCallback(const geometry_msgs::msg::Twist::SharedPtr msg);
+        double clamp_velocity(double value);
 
         std::string input_topic = "cmd_vel_final";
         std::string output_topic = "cmd_vel";
@@ -26,6 +28,7 @@ namespace nav_control
         float LENGTH_ROTATION_CENTER_SOLO;
         float LENGTH_ROTATION_CENTER_DOCKING;
         float LENGTH_ROTATION_CENTER_COMBINE_CHAIR;
+        double max_speed = 0.6;
 
         rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_sub;
         rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub;

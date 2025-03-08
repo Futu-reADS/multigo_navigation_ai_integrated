@@ -169,7 +169,7 @@ namespace nav_docking
             feedback->distance = static_cast<double>(feedback_distance);
             // feedback->distance = static_cast<double>(5.0);
             goal_handle->publish_feedback(feedback);
-            RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 1000,   "Feedback: distance = %.2f", feedback->distance);
+            RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 1000,   "Feedback: distance = %.4f", feedback->distance);
         }
         
         // Complete the goal
@@ -365,9 +365,6 @@ namespace nav_docking
         {
             rclcpp::Time current_time = this->now();
             geometry_msgs::msg::Twist twist_msg;
-            double error_x;
-            double error_y;
-            double error_yaw;
             // Calculate dt as the duration since the last loop
             rclcpp::Duration duration_left = current_time - marker_time_left;
             rclcpp::Duration duration_right = current_time - marker_time_right;
@@ -388,10 +385,13 @@ namespace nav_docking
                 double distance = (left_marker_x) + (right_marker_x) / 2;
                 double rotation = (right_marker_x - left_marker_x);
                 double center = (left_marker_y - -right_marker_y);
-                error_x = distance  - aruco_distance_offset;
+                error_x = distance - aruco_distance_offset;
                 error_y = center - aruco_center_offset_dual;
                 error_yaw = rotation - aruco_rotation_offset_dual;
-                RCLCPP_WARN_STREAM(this->get_logger(), "Error yaw dual stage 4 "<<  error_yaw);
+                // RCLCPP_WARN_STREAM(this->get_logger(), "Error X dual stage 4 "<<  error_x);
+                // RCLCPP_WARN_STREAM(this->get_logger(), "Error Y  dual stage 4 "<<  error_y);
+                // RCLCPP_WARN_STREAM(this->get_logger(), "Error yaw dual stage 4 "<<  error_yaw);
+
 
             }
             else  // Use single marker
@@ -405,7 +405,9 @@ namespace nav_docking
                     error_y = marker_y - aruco_left_right_offset;
                     error_yaw = left_yaw;
                     callback_duration = callback_duration_left;
-                    RCLCPP_WARN_STREAM(this->get_logger(), "Error yaw left stage 4"<<  error_yaw);
+                    // RCLCPP_WARN_STREAM(this->get_logger(), "Error X dual stage 4 "<<  error_x);
+                    // RCLCPP_WARN_STREAM(this->get_logger(), "Error Y  dual stage 4 "<<  error_y);
+                    // RCLCPP_WARN_STREAM(this->get_logger(), "Error yaw dual stage 4 "<<  error_yaw);
                 }
                 else  // Use right marker
                 {
@@ -416,6 +418,9 @@ namespace nav_docking
                     error_y = marker_y + aruco_left_right_offset;
                     error_yaw = right_yaw;
                     callback_duration = callback_duration_right;
+                    // RCLCPP_WARN_STREAM(this->get_logger(), "Error X dual stage 4 "<<  error_x);
+                    // RCLCPP_WARN_STREAM(this->get_logger(), "Error Y  dual stage 4 "<<  error_y);
+                    // RCLCPP_WARN_STREAM(this->get_logger(), "Error yaw dual stage 4 "<<  error_yaw);
                 }
             }
             
@@ -482,6 +487,7 @@ namespace nav_docking
             rclcpp::Duration duration_left = current_time - marker_time_left;
             rclcpp::Duration duration_right = current_time - marker_time_right;
             callback_duration_dual = std::max(duration_left.seconds(), duration_right.seconds());  // seconds as a double
+            double min_docking_yaw_error = min_docking_error / 2;
 
             if (callback_duration_dual > docking_reset_threshold_sec)
                 stage_4_docking_status = false;
@@ -501,22 +507,24 @@ namespace nav_docking
             double error_rotation = rotation - aruco_rotation_offset_dual;
             this->feedback_distance = error_dist;
 
-            RCLCPP_WARN_STREAM(this->get_logger(), "Error rotation dual stage 5"<<  error_rotation);
+            // RCLCPP_WARN_STREAM(this->get_logger(), "Error dist dual stage 5"<<  error_dist);
+            // RCLCPP_WARN_STREAM(this->get_logger(), "Error center dual stage 5"<<  error_center);
+            // RCLCPP_WARN_STREAM(this->get_logger(), "Error rotation dual stage 5"<<  error_rotation);
 
             // Check for marker delay and status
             if (callback_duration_dual < marker_delay_threshold_sec)
             {
                 // Use PID function to calculate controlled velocities
                 if (fabs(error_dist) > min_docking_error ||
-                    fabs(error_center) > min_error || 
-                    fabs(error_rotation) > min_docking_error)
+                    fabs(error_center) > min_docking_error ||
+                    fabs(error_rotation) > min_docking_yaw_error)
                 {
                     twist_msg.linear.x = calculate(error_dist, prev_error_dist,
                                                     kp_x, ki_x, kd_x, callback_duration_dual, max_speed, min_speed, min_docking_error);
                     twist_msg.linear.y = calculate(error_center, prev_error_center,
-                                                    kp_y, ki_y, kd_y, callback_duration_dual, max_speed, min_speed, min_error);
+                                                    kp_y, ki_y, kd_y, callback_duration_dual, max_speed, min_speed, min_docking_error);
                     twist_msg.angular.z = calculate( error_rotation, prev_error_rotation,
-                                                    kp_z, ki_z, kd_z, callback_duration_dual, max_speed, min_speed, min_docking_error);
+                                                    kp_z, ki_z, kd_z, callback_duration_dual, max_speed, min_speed, min_docking_yaw_error);
                     cmd_vel_pub->publish(twist_msg);
                     stage_5_docking_status = false;
                     confirmed_docking_status=false;  // Make false since out of spec

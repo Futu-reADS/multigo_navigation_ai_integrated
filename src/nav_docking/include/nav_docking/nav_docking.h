@@ -107,6 +107,10 @@ namespace nav_docking
         double kp_z = 0.05, ki_z = 0.05, kd_z = 0.05;
         double max_speed = 0.1;
         double min_speed = 0.005;
+
+        double error_x;
+        double error_y;
+        double error_yaw;
         // Initialize integral and previous error terms for x and y
         double prev_error_x = 0.0;
         double prev_error_y = 0.0;
