@@ -38,7 +38,7 @@ namespace nav_docking
         this->get_parameter("camera_right_frame", camera_right_frame);
         this->get_parameter("desired_aruco_marker_id_left", desired_aruco_marker_id_left);
         this->get_parameter("aruco_distance_offset", aruco_distance_offset);
-        this->get_parameter("aruco_left_right_offset", aruco_left_right_offset);
+        this->get_parameter("aruco_left_right_offset_single", aruco_left_right_offset_single);
         this->get_parameter("desired_aruco_marker_id_left", desired_aruco_marker_id_left);
         this->get_parameter("desired_aruco_marker_id_right", desired_aruco_marker_id_right);
         this->get_parameter("aruco_distance_offset_dual", aruco_distance_offset_dual);
@@ -360,18 +360,20 @@ namespace nav_docking
         this->get_parameter("aruco_distance_offset_dual", aruco_distance_offset_dual);
         this->get_parameter("aruco_center_offset_dual", aruco_center_offset_dual);
         this->get_parameter("aruco_rotation_offset_dual", aruco_rotation_offset_dual);
+        
+        rclcpp::Time current_time = this->now();
+        geometry_msgs::msg::Twist twist_msg;
+        // Calculate dt as the duration since the last loop
+        rclcpp::Duration duration_left = current_time - marker_time_left;
+        rclcpp::Duration duration_right = current_time - marker_time_right;
+        callback_duration_left = duration_left.seconds();  // seconds as a double
+        callback_duration_right = duration_right.seconds();  // seconds as a double
+        callback_duration = std::max(callback_duration_left, callback_duration_right);
+        this->feedback_distance = error_x;
+
         if(Nav_docking::enable_callback == false) return;
         if (stage_4_docking_status == false)
         {
-            rclcpp::Time current_time = this->now();
-            geometry_msgs::msg::Twist twist_msg;
-            // Calculate dt as the duration since the last loop
-            rclcpp::Duration duration_left = current_time - marker_time_left;
-            rclcpp::Duration duration_right = current_time - marker_time_right;
-            callback_duration_left = duration_left.seconds();  // seconds as a double
-            callback_duration_right = duration_right.seconds();  // seconds as a double
-            callback_duration = std::max(callback_duration_left, callback_duration_right);
-            this->feedback_distance = error_x;
 
             // Calculate the error
             if (callback_duration < marker_delay_threshold_sec)  // Use dual markers. 
@@ -388,11 +390,9 @@ namespace nav_docking
                 error_x = distance - aruco_distance_offset;
                 error_y = center - aruco_center_offset_dual;
                 error_yaw = rotation - aruco_rotation_offset_dual;
-                // RCLCPP_WARN_STREAM(this->get_logger(), "Error X dual stage 4 "<<  error_x);
-                // RCLCPP_WARN_STREAM(this->get_logger(), "Error Y  dual stage 4 "<<  error_y);
-                // RCLCPP_WARN_STREAM(this->get_logger(), "Error yaw dual stage 4 "<<  error_yaw);
-
-
+                RCLCPP_WARN_STREAM(this->get_logger(), "Calibration: Offset dist dual marker stage 4: " <<  distance);
+                RCLCPP_WARN_STREAM(this->get_logger(), "Calibration: Offset center dual marker stage 4: " <<  center);
+                RCLCPP_WARN_STREAM(this->get_logger(), "Calibration: Offset rotation dual marker stage 4: " <<  rotation);
             }
             else  // Use single marker
             {
@@ -402,12 +402,12 @@ namespace nav_docking
                     double marker_y = left_transformed_marker_t.y();
                     double marker_z = left_transformed_marker_t.z();
                     error_x = marker_x - aruco_distance_offset;
-                    error_y = marker_y - aruco_left_right_offset;
+                    error_y = marker_y - aruco_left_right_offset_single;
                     error_yaw = left_yaw;
                     callback_duration = callback_duration_left;
-                    // RCLCPP_WARN_STREAM(this->get_logger(), "Error X dual stage 4 "<<  error_x);
-                    // RCLCPP_WARN_STREAM(this->get_logger(), "Error Y  dual stage 4 "<<  error_y);
-                    // RCLCPP_WARN_STREAM(this->get_logger(), "Error yaw dual stage 4 "<<  error_yaw);
+                    RCLCPP_WARN_STREAM(this->get_logger(), "Calibration: Offset dist stage 4: " <<  marker_x);
+                    RCLCPP_WARN_STREAM(this->get_logger(), "Calibration: Offset center stage 4: " <<  marker_y);
+                    RCLCPP_WARN_STREAM(this->get_logger(), "Calibration: Offset rotation stage 4: " <<  left_yaw);
                 }
                 else  // Use right marker
                 {
@@ -415,15 +415,15 @@ namespace nav_docking
                     double marker_y = right_transformed_marker_t.y();
                     double marker_z = right_transformed_marker_t.z();
                     error_x = marker_x - aruco_distance_offset;
-                    error_y = marker_y + aruco_left_right_offset;
+                    error_y = marker_y + aruco_left_right_offset_single;
                     error_yaw = right_yaw;
                     callback_duration = callback_duration_right;
-                    // RCLCPP_WARN_STREAM(this->get_logger(), "Error X dual stage 4 "<<  error_x);
-                    // RCLCPP_WARN_STREAM(this->get_logger(), "Error Y  dual stage 4 "<<  error_y);
-                    RCLCPP_WARN_STREAM(this->get_logger(), "Error yaw dual stage 4 "<<  error_yaw);
+                    RCLCPP_WARN_STREAM(this->get_logger(), "Calibration: Offset dist stage 4: " <<  marker_x);
+                    RCLCPP_WARN_STREAM(this->get_logger(), "Calibration: Offset center stage 4: " <<  marker_y);
+                    RCLCPP_WARN_STREAM(this->get_logger(), "Calibration: Offset rotation stage 4: " <<  right_yaw);
                 }
             }
-            
+
             if ((callback_duration < marker_delay_threshold_sec)) // Check for marker delay and status
             {
                 // Use PID function to calculate controlled velocities
@@ -478,15 +478,17 @@ namespace nav_docking
         this->get_parameter("aruco_distance_offset_dual", aruco_distance_offset_dual);
         this->get_parameter("aruco_center_offset_dual", aruco_center_offset_dual);
         this->get_parameter("aruco_rotation_offset_dual", aruco_rotation_offset_dual);
+
+        rclcpp::Time current_time = this->now();
+        geometry_msgs::msg::Twist twist_msg;
+        // Calculate dt as the duration since the last loop
+        rclcpp::Duration duration_left = current_time - marker_time_left;
+        rclcpp::Duration duration_right = current_time - marker_time_right;
+        callback_duration_dual = std::max(duration_left.seconds(), duration_right.seconds());  // seconds as a double
+
         if(Nav_docking::enable_callback == false) return;
         if (stage_4_docking_status == true)
         {
-            rclcpp::Time current_time = this->now();
-            geometry_msgs::msg::Twist twist_msg;
-            // Calculate dt as the duration since the last loop
-            rclcpp::Duration duration_left = current_time - marker_time_left;
-            rclcpp::Duration duration_right = current_time - marker_time_right;
-            callback_duration_dual = std::max(duration_left.seconds(), duration_right.seconds());  // seconds as a double
 
             if (callback_duration_dual > docking_reset_threshold_sec)
                 stage_4_docking_status = false;
@@ -506,9 +508,9 @@ namespace nav_docking
             double error_rotation = rotation - aruco_rotation_offset_dual;
             this->feedback_distance = error_dist;
 
-            // RCLCPP_WARN_STREAM(this->get_logger(), "Error dist dual stage 5"<<  error_dist);
-            // RCLCPP_WARN_STREAM(this->get_logger(), "Error center dual stage 5"<<  error_center);
-            RCLCPP_WARN_STREAM(this->get_logger(), "Error rotation dual stage 5"<<  error_rotation);
+            // RCLCPP_WARN_STREAM(this->get_logger(), "Calibration: Offset dist dual marker  stage 5"<<  distance);
+            // RCLCPP_WARN_STREAM(this->get_logger(), "Calibration: Offset center dual marker  stage 5"<<  center);
+            // RCLCPP_WARN_STREAM(this->get_logger(), "Calibration: Offset rotation dual marker stage 5"<<  rotation);
 
             // Check for marker delay and status
             if (callback_duration_dual < marker_delay_threshold_sec)
@@ -556,6 +558,7 @@ namespace nav_docking
             prev_error_dist = error_dist;
             prev_error_center = error_center;
             prev_error_rotation = error_rotation;
+
         }
     }
 } // namespace nav_docking

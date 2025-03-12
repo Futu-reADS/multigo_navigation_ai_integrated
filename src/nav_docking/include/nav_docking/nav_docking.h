@@ -85,7 +85,7 @@ namespace nav_docking
 
         // front marker offset
         float aruco_distance_offset;
-        float aruco_left_right_offset;
+        float aruco_left_right_offset_single;
         // dual markers offset
         float aruco_distance_offset_dual;
         float aruco_center_offset_dual;
