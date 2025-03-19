@@ -23,7 +23,7 @@ namespace nav_docking
         this->declare_parameter<int>("desired_aruco_marker_id_left", -1);
         this->declare_parameter<int>("desired_aruco_marker_id_right", -1);
         this->declare_parameter<float>("aruco_distance_offset", -0.5);
-        this->declare_parameter<float>("aruco_left_right_offset", 0);
+        this->declare_parameter<float>("aruco_left_right_offset_single", 0);
         this->declare_parameter<float>("aruco_distance_offset_dual", 0);
         this->declare_parameter<float>("aruco_center_offset_dual", 0);
         this->declare_parameter<float>("aruco_rotation_offset_dual", 0);
@@ -390,9 +390,9 @@ namespace nav_docking
                 error_x = distance - aruco_distance_offset;
                 error_y = center - aruco_center_offset_dual;
                 error_yaw = rotation - aruco_rotation_offset_dual;
-                RCLCPP_WARN_STREAM(this->get_logger(), "Calibration: Offset dist dual marker stage 4: " <<  distance);
-                RCLCPP_WARN_STREAM(this->get_logger(), "Calibration: Offset center dual marker stage 4: " <<  center);
-                RCLCPP_WARN_STREAM(this->get_logger(), "Calibration: Offset rotation dual marker stage 4: " <<  rotation);
+                // RCLCPP_WARN_STREAM(this->get_logger(), "Calibration: Offset dist dual marker stage 4: " <<  distance);
+                // RCLCPP_WARN_STREAM(this->get_logger(), "Calibration: Offset center dual marker stage 4: " <<  center);
+                // RCLCPP_WARN_STREAM(this->get_logger(), "Calibration: Offset rotation dual marker stage 4: " <<  rotation);
             }
             else  // Use single marker
             {
@@ -405,9 +405,9 @@ namespace nav_docking
                     error_y = marker_y - aruco_left_right_offset_single;
                     error_yaw = left_yaw;
                     callback_duration = callback_duration_left;
-                    RCLCPP_WARN_STREAM(this->get_logger(), "Calibration: Offset dist stage 4: " <<  marker_x);
-                    RCLCPP_WARN_STREAM(this->get_logger(), "Calibration: Offset center stage 4: " <<  marker_y);
-                    RCLCPP_WARN_STREAM(this->get_logger(), "Calibration: Offset rotation stage 4: " <<  left_yaw);
+                    // RCLCPP_WARN_STREAM(this->get_logger(), "Calibration: Offset dist stage 4: " <<  marker_x);
+                    // RCLCPP_WARN_STREAM(this->get_logger(), "Calibration: Offset center stage 4: " <<  marker_y);
+                    // RCLCPP_WARN_STREAM(this->get_logger(), "Calibration: Offset rotation stage 4: " <<  left_yaw);
                 }
                 else  // Use right marker
                 {
@@ -418,9 +418,9 @@ namespace nav_docking
                     error_y = marker_y + aruco_left_right_offset_single;
                     error_yaw = right_yaw;
                     callback_duration = callback_duration_right;
-                    RCLCPP_WARN_STREAM(this->get_logger(), "Calibration: Offset dist stage 4: " <<  marker_x);
-                    RCLCPP_WARN_STREAM(this->get_logger(), "Calibration: Offset center stage 4: " <<  marker_y);
-                    RCLCPP_WARN_STREAM(this->get_logger(), "Calibration: Offset rotation stage 4: " <<  right_yaw);
+                    // RCLCPP_WARN_STREAM(this->get_logger(), "Calibration: Offset dist stage 4: " <<  marker_x);
+                    // RCLCPP_WARN_STREAM(this->get_logger(), "Calibration: Offset center stage 4: " <<  marker_y);
+                    // RCLCPP_WARN_STREAM(this->get_logger(), "Calibration: Offset rotation stage 4: " <<  right_yaw);
                 }
             }
 
