@@ -68,10 +68,8 @@ Open a new terminal window and run these commands:
 	sudo apt install python3-pip
 	pip3 install pyyaml
  	pip install pyserial
-	sudo apt install python3-serial
+	sudo apt install python3-serial ros-humble-pointcloud-to-laserscan ros-humble-laser-filters
  	sudo apt-get install ros-humble-pcl-ros
- 	sudo apt install ros-humble-pointcloud-to-laserscan
-  	sudo apt install ros-humble-laser-filters
 	sudo apt update
 
 ~~sudo apt install ros-$ROS_DISTRO-rtabmap-ros~~ 
