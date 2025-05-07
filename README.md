@@ -123,3 +123,13 @@ Robot:
     ssh -X USER @ IP_Address
     source install/setup.bash
     ros2 launch boot rviz_launch.py
+
+
+## Uninstall 
+    ros2 launch boot simulation.launch.py 
+    sudo apt-get remove ros-humble-turtlebot3-gazebo ros-humble-pcl-ros
+    sudo apt remove ros-humble-grid-map ros-humble-pcl-conversions ros-humble-pcl-msgs python3-pip python3-serial ros-$ROS_DISTRO-rtabmap-ros ros-humble-rtabmap-slam ros-humble-pointcloud-to-laserscan ros-humble-laser-filters 
+    sudo apt remove ros-humble-gazebo-* ros-humble-gazebo-ros-pkgs ros-humble-gazebo-ros ros-humble-cartographer ros-humble-cartographer-ros ros-humble-navigation2 ros-humble-nav2-bringup
+    sudo apt autoremove
+
+Delete folder "turtlebot3_ws" in Home directory
