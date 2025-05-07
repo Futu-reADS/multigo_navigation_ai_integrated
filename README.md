@@ -30,28 +30,26 @@ Reload or open a new terminal.
 ~~sudo apt install ros-humble-cartographer~~
 ~~sudo apt install ros-humble-cartographer-ros~~
 
-#### ~~Install TurtleBot3 Packages~~
+#### ~~Install TurtleBot3 Packages~~ 
+Note: These commands are no longer needed as the previous command is a one line install command. 
     mkdir -p ~/turtlebot3_ws/src
     cd ~/turtlebot3_ws/src/
     git clone -b humble https://github.com/ROBOTIS-GIT/DynamixelSDK.git
     git clone -b humble https://github.com/ROBOTIS-GIT/turtlebot3_msgs.git
     git clone -b humble https://github.com/ROBOTIS-GIT/turtlebot3.git
-    sudo apt install python3-colcon-common-extensions
+    git clone -b humble https://github.com/ROBOTIS-GIT/turtlebot3_simulations.git
+    sudo apt-get install ros-humble-turtlebot3-gazebo
     cd ~/turtlebot3_ws
     colcon build --symlink-install
     echo 'source ~/turtlebot3_ws/install/setup.bash' >> ~/.bashrc
     source ~/.bashrc
 
+    sudo apt install python3-colcon-common-extensions ##TO CHECK
+
 #### Configure Environment for TurtleBot3
     echo 'export ROS_DOMAIN_ID=30 #TURTLEBOT3' >> ~/.bashrc
     echo 'source /usr/share/gazebo/setup.sh' >> ~/.bashrc
     source ~/.bashrc
-
-#### Install TurtleBot3 Simulation Package for Gazebo
-    sudo apt-get install ros-humble-turtlebot3-gazebo ##New script required for the correct directory of models and world maps to be installed later.
-    cd ~/turtlebot3_ws/src/
-    git clone -b humble https://github.com/ROBOTIS-GIT/turtlebot3_simulations.git
-    cd ~/turtlebot3_ws && colcon build --symlink-install
 
 ### Optional - Testing NAV2 and Gazebo Installation 
     export TURTLEBOT3_MODEL=waffle
@@ -67,22 +65,23 @@ If all of the prerequisites have been installed properly, Gazebo and RVIZ would 
 Open a new terminal window and run these commands:
 
 	sudo apt update
-	sudo apt install ros-humble-pcl-conversions ros-humble-pcl-msgs python3-pip
+	sudo apt install python3-pip
 	pip3 install pyyaml
  	pip install pyserial
 	sudo apt install python3-serial
-	sudo apt install ros-$ROS_DISTRO-rtabmap-ros
  	sudo apt-get install ros-humble-pcl-ros
- 	sudo apt install ros-humble-rtabmap-slam
  	sudo apt install ros-humble-pointcloud-to-laserscan
   	sudo apt install ros-humble-laser-filters
 	sudo apt update
+
+~~sudo apt install ros-$ROS_DISTRO-rtabmap-ros~~ 
+~~sudo apt install ros-humble-rtabmap-slam~~
 
 ### Cloning Packages
 Open a new terminal window and run these commands:
 
     git config --global submodule.recurse true
-    git clone --recurse-submodules -b feature/localization https://github.com/Futu-reADS/multigo_navigation.git
+    git clone --recurse-submodules -b feature/localization git@github.com:Futu-reADS/multigo_navigation.git
     cd multigo_navigation
     vcs import src < multigo.repos --recursive
     vcs pull src
