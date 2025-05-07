@@ -33,7 +33,7 @@ Install NAV2
 
 ### Cloning
 
-    git clone -b feature/wheelchair_docking_dual_cam https://github.com/ttvines/multigo.git
+    git clone git@github.com:Futu-reADS/multigo_navigation.git
 
 ### Install
     
