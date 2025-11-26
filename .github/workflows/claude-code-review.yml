@@ -1,0 +1,163 @@
+name: Claude Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    # Option A: Selective path filtering - Review code + important docs, skip lock files
+    paths:
+      - 'src/**'            # ROS source code
+      - 'launch/**'         # ROS launch files
+      - 'config/**'         # Configuration files
+      - 'scripts/**'        # Scripts
+      - 'tests/**'          # Test files
+      - 'docs/**'           # Include documentation folder
+      - 'CMakeLists.txt'    # CMake build files
+      - 'package.xml'       # ROS package manifest
+      - 'CLAUDE.md'         # Include project instructions
+      - 'README.md'         # Include main readme
+      - '!**/package-lock.json'
+      - '!**/yarn.lock'
+      - '!**/pnpm-lock.yaml'
+      - '!**/poetry.lock'
+      - '!**/Pipfile.lock'
+      - '!**/*.min.js'      # Exclude minified files
+      - '!**/*.bundle.js'
+
+jobs:
+  claude-review:
+    # Optional: Filter by PR author (uncomment to use)
+    # if: |
+    #   github.event.pull_request.user.login == 'external-contributor' ||
+    #   github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR'
+
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: read
+      id-token: write
+      actions: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check PR size
+        id: pr-size
+        run: |
+          # Get total stats
+          TOTAL_FILES=$(gh pr view ${{ github.event.pull_request.number }} --json files -q '.files | length')
+          TOTAL_ADDITIONS=$(gh pr view ${{ github.event.pull_request.number }} --json additions -q '.additions')
+
+          # Count only reviewable files (exclude lock files, generated files)
+          REVIEWABLE_FILES=$(gh pr view ${{ github.event.pull_request.number }} --json files -q '.files[] | select(
+            .path | test("(package-lock\\.json|yarn\\.lock|pnpm-lock\\.yaml|poetry\\.lock|Pipfile\\.lock|\\.min\\.js|\\.bundle\\.js)$") | not
+          ) | .path' | wc -l)
+
+          # Count additions in reviewable files only
+          REVIEWABLE_ADDITIONS=$(gh pr view ${{ github.event.pull_request.number }} --json files -q '.files[] | select(
+            .path | test("(package-lock\\.json|yarn\\.lock|pnpm-lock\\.yaml|poetry\\.lock|Pipfile\\.lock|\\.min\\.js|\\.bundle\\.js)$") | not
+          ) | .additions' | awk '{sum+=$1} END {print sum}')
+
+          echo "total_files=$TOTAL_FILES" >> $GITHUB_OUTPUT
+          echo "total_additions=$TOTAL_ADDITIONS" >> $GITHUB_OUTPUT
+          echo "reviewable_files=$REVIEWABLE_FILES" >> $GITHUB_OUTPUT
+          echo "reviewable_additions=$REVIEWABLE_ADDITIONS" >> $GITHUB_OUTPUT
+
+          # Check reviewable size (not total size)
+          if [ "$REVIEWABLE_FILES" -gt 50 ]; then
+            echo "⚠️ Large PR detected: $REVIEWABLE_FILES reviewable files changed"
+            echo "skip=true" >> $GITHUB_OUTPUT
+          elif [ "$REVIEWABLE_ADDITIONS" -gt 2000 ]; then
+            echo "⚠️ Large PR detected: $REVIEWABLE_ADDITIONS reviewable lines added"
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "✓ PR size acceptable for review: $REVIEWABLE_FILES files, $REVIEWABLE_ADDITIONS lines (excluding lock files)"
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Comment if PR too large
+        if: steps.pr-size.outputs.skip == 'true'
+        run: |
+          gh pr comment ${{ github.event.pull_request.number }} --body "ℹ️ This PR is quite large (${{ steps.pr-size.outputs.reviewable_files }} reviewable files, ${{ steps.pr-size.outputs.reviewable_additions }}+ lines). Automatic review is skipped. Consider:
+          - Breaking into smaller PRs
+          - Requesting manual @claude review for specific files
+          - Tagging @claude with specific questions"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run Claude Code Review
+        if: steps.pr-size.outputs.skip == 'false'
+        id: claude-review
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            **IMPORTANT - REVIEW ONLY MODE**
+            You are in REVIEW-ONLY mode. Do NOT make any code changes, create commits, or modify files.
+            Your role is to analyze and provide feedback ONLY.
+
+            ---
+
+            REPOSITORY: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+            AUTHOR: @${{ github.event.pull_request.user.login }}
+            TITLE: ${{ github.event.pull_request.title }}
+
+            Please review this pull request and provide structured feedback.
+
+            Use the repository's CLAUDE.md file (if it exists) for project-specific guidance on:
+            - Code style and conventions
+            - Testing requirements
+            - Security standards
+            - Performance expectations
+
+            Provide your review in this format:
+
+            ## 📋 Summary
+            [Brief overview of what this PR does and overall assessment]
+
+            ## ✅ What's Good
+            - [Highlight positive aspects and good practices]
+
+            ## ⚠️ Issues Found
+
+            ### 🔴 Critical (Must Fix)
+            - [Security vulnerabilities, bugs, breaking changes]
+
+            ### 🟡 Important (Should Fix)
+            - [Performance issues, code quality, best practices]
+
+            ### 🟢 Nice-to-have (Consider)
+            - [Minor improvements, style suggestions]
+
+            ## 💡 Suggestions
+            [Specific improvements with code examples where helpful]
+
+            ## ✅ Checklist
+            - [ ] Tests added/updated appropriately
+            - [ ] Documentation updated if needed
+            - [ ] No obvious security vulnerabilities
+            - [ ] Performance is acceptable
+            - [ ] Code follows project conventions
+
+            ## 📚 Additional Notes
+            [Any other observations or recommendations]
+
+            ---
+
+            After completing your review, use `gh pr comment` with your Bash tool to post this review as a comment on the PR.
+
+          claude_args: '--allowed-tools "Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr comment:*),Bash(gh pr files:*),Bash(gh issue view:*),Bash(gh search:*),Read,Glob,Grep"'
+
+      - name: Notify on failure
+        if: failure() && steps.pr-size.outputs.skip == 'false'
+        run: |
+          gh pr comment ${{ github.event.pull_request.number }} --body "⚠️ Automatic code review failed. Please check the [Actions log](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) or request a manual review by tagging @claude."
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
