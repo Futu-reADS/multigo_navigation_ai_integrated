@@ -99,41 +99,62 @@ If the user's request doesn't clearly map to a workflow phase:
 
 ## Architecture & Code Standards
 
-### Project Structure
+### Project Structure (ROS 2 Navigation System)
 ```
 src/
-├── models/         # Data models (Task.js)
-├── controllers/    # Request handlers (taskController.js)
-├── middleware/     # Validation, error handling
-├── routes/         # API routes (tasks.js)
-└── app.js          # Express app setup
+├── aruco_detect/       # ArUco marker detection for localization
+├── camera_publisher/   # Camera data publishing node
+├── ego_pcl_filter/     # Point cloud filtering (ego vehicle removal)
+├── laserscan_to_pcl/   # LaserScan to PointCloud2 conversion
+├── mecanum_wheels/     # Mecanum wheel kinematics and control
+├── nav_control/        # Navigation control and path execution
+├── nav_docking/        # Autonomous docking functionality
+├── nav_goal/           # Goal management and navigation goals
+├── pcl_merge/          # Point cloud merging from multiple sensors
+└── third_party/        # Third-party dependencies
 
-tests/
-└── tasks.test.js   # Comprehensive test suite
+Each package follows ROS 2 structure:
+package_name/
+├── package.xml         # Package manifest (format 3)
+├── CMakeLists.txt      # Build configuration
+├── launch/             # Launch files (.py or .xml)
+├── config/             # YAML configuration files
+├── src/                # C++ source files
+├── include/            # Header files
+└── test/               # Unit and integration tests
 ```
 
-### Code Patterns
+### ROS 2 Code Patterns
 
-**Model Layer (src/models/Task.js):**
-- In-memory storage (tasks array)
-- Static methods for operations
-- Example: `Task.findAll()`, `Task.findById()`, `Task.create()`
+**Node Structure:**
+- Use rclcpp::Node as base class
+- Implement lifecycle management when needed
+- Use parameter callbacks for dynamic reconfiguration
+- Proper shutdown handling (e.g., SIGINT)
 
-**Controller Layer (src/controllers/taskController.js):**
-- Request handling
-- Response format: `{ success: true, data: {...} }`
-- Error handling with try/catch and next(error)
+**Message Passing:**
+- Publishers/Subscribers for data streams (sensor data, status)
+- Services for request/response operations (one-time actions)
+- Actions for long-running tasks (navigation goals, docking)
+- TF2 for coordinate transformations
 
-**Validation (src/middleware/validation.js):**
-- express-validator for input validation
-- Middleware functions that validate and sanitize
-- Return 400 errors with validation details
+**Navigation Components:**
+- **nav_control**: Main navigation controller, path following, obstacle avoidance
+- **nav_docking**: Precision docking using visual markers or sensors
+- **nav_goal**: Goal queue management, multi-waypoint navigation
+- **Sensor Processing**: Point cloud filtering, merging, laser scan processing
+- **Localization**: ArUco markers, sensor fusion with robot_localization
 
-**Testing (tests/tasks.test.js):**
-- Jest + Supertest
-- Comprehensive coverage (aim for 80%+)
-- Test structure: describe blocks for endpoints
-- Always clean up with `beforeEach`
+**Testing (ROS 2):**
+- Use `colcon test` for running all tests
+- Unit tests with gtest (C++) for individual components
+- Integration tests for node interactions
+- Launch tests for system-level validation
+- Test coverage should include:
+  - Navigation algorithms (path planning, following)
+  - Safety features (collision avoidance, emergency stop)
+  - Sensor data processing
+  - Message passing and transforms
 
 ---
 
@@ -155,6 +176,7 @@ tests/
 - Ignore the automation scripts
 - Write vague commit messages or comments
 - Commit without understanding which phase we're in
+- **NEVER use the bot mention (with @) in issue descriptions, comments, or documentation - always say "Claude bot" instead to avoid accidental triggers**
 
 ---
 
@@ -234,7 +256,7 @@ colcon test  # Must pass - no exceptions
 **Primary Documentation (READ THESE):**
 - `.claude/WORKFLOW.md` - **SINGLE SOURCE OF TRUTH** (read at start of every session!)
 - `AUTOMATION-FAQ.md` - Automation details and Q&A
-- `COMMENT-WRITING-GUIDE.md` - How to write good comments
+- `HOOKS-SETUP.md` - Workflow automation setup guide
 
 **Configuration:**
 - `.claude/settings.json` - ClaudeCode hooks configuration

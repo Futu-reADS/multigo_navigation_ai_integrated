@@ -244,8 +244,6 @@ Feature complete and ready for PR."
 - [ ] Structured with headings/bullets
 - [ ] Would be useful to read in 6 months
 
-📖 **Detailed Guide:** See `COMMENT-WRITING-GUIDE.md` for extensive examples
-
 ---
 
 ### 5. Posted Comment Structure
@@ -691,7 +689,7 @@ task-manager-demo/
 ├── src/                         ← Application code
 ├── tests/                       ← Test files
 ├── AUTOMATION-FAQ.md            ← Detailed automation Q&A
-├── COMMENT-WRITING-GUIDE.md     ← Comment examples & templates
+├── HOOKS-SETUP.md               ← Workflow automation setup
 └── SETUP-COMPLETE.md            ← Initial setup documentation
 ```
 
