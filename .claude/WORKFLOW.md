@@ -244,8 +244,6 @@ Feature complete and ready for PR."
 - [ ] Structured with headings/bullets
 - [ ] Would be useful to read in 6 months
 
-📖 **Detailed Guide:** See `COMMENT-WRITING-GUIDE.md` for extensive examples
-
 ---
 
 ### 5. Posted Comment Structure
@@ -691,7 +689,6 @@ task-manager-demo/
 ├── src/                         ← Application code
 ├── tests/                       ← Test files
 ├── AUTOMATION-FAQ.md            ← Detailed automation Q&A
-├── COMMENT-WRITING-GUIDE.md     ← Comment examples & templates
 └── SETUP-COMPLETE.md            ← Initial setup documentation
 ```
 
@@ -740,9 +737,8 @@ task-manager-demo/
 
 1. **Check this file first** (single source of truth)
 2. **For automation details:** See `AUTOMATION-FAQ.md`
-3. **For comment examples:** See `COMMENT-WRITING-GUIDE.md`
-4. **For git issues:** Check `.gitignore` and working tree status
-5. **For testing:** Run `colcon test` and verify all pass
+3. **For git issues:** Check `.gitignore` and working tree status
+4. **For testing:** Run `colcon test` and verify all pass
 
 ---
 

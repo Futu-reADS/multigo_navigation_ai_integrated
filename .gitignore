@@ -24,3 +24,8 @@ src/HesaiLidar_ROS_2.0
 
 src/mecanum_drive
 
+# Claude Code automation artifacts
+.claude/session-counter.json
+.claude/session-tracking.json
+.claude-prompt-*.md
+docs/dev-logs/

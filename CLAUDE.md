@@ -234,7 +234,7 @@ colcon test  # Must pass - no exceptions
 **Primary Documentation (READ THESE):**
 - `.claude/WORKFLOW.md` - **SINGLE SOURCE OF TRUTH** (read at start of every session!)
 - `AUTOMATION-FAQ.md` - Automation details and Q&A
-- `COMMENT-WRITING-GUIDE.md` - How to write good comments
+- `.claude/hooks/README.md` - Hooks setup and usage guide
 
 **Configuration:**
 - `.claude/settings.json` - ClaudeCode hooks configuration
