@@ -25,9 +25,9 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      pull-requests: write  # Changed from read to write
-      issues: write         # Changed from read to write
+      contents: write       # Changed from read to write (enables reactions)
+      pull-requests: write
+      issues: write
       id-token: write
       actions: read # Required for Claude to read CI results on PRs
     steps:
