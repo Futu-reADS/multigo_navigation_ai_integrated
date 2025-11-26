@@ -97,6 +97,7 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           prompt: |
             **IMPORTANT - REVIEW ONLY MODE**
             You are in REVIEW-ONLY mode. Do NOT make any code changes, create commits, or modify files.
