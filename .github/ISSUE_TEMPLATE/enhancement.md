@@ -6,6 +6,27 @@ labels: enhancement
 assignees: ''
 ---
 
+## 📌 When to Use This Template
+
+Use **Enhancement** (not Feature Request) when:
+- Improving performance of **existing** functionality
+- Optimizing **existing** algorithms or code
+- Refactoring **existing** components
+- Making **existing** features more user-friendly
+
+**Examples of Enhancements:**
+- "Optimize path planning algorithm to reduce CPU usage"
+- "Improve obstacle detection accuracy in nav_control"
+- "Refactor nav_docking for better code maintainability"
+- "Add logging to existing sensor fusion module"
+
+**Not Enhancements** (use Feature Request instead):
+- Adding new sensor support (new capability)
+- Implementing multi-robot coordination (new feature)
+- Creating new visualization tools (new functionality)
+
+---
+
 ## 🔧 Enhancement Summary
 
 **What existing functionality needs improvement:**

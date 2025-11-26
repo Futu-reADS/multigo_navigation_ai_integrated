@@ -6,6 +6,23 @@ labels: documentation, reverse-engineering
 assignees: ''
 ---
 
+## 📌 When to Use This Template
+
+Use this template when you need to:
+- Document undocumented ROS 2 navigation algorithms or sensor fusion code
+- Extract requirements from legacy code before refactoring
+- Create architecture documentation for existing systems
+- Analyze complex navigation logic to understand behavior
+- Prepare for major refactoring by understanding current implementation
+
+**Common scenarios:**
+- Understanding path planning algorithms in nav_control
+- Documenting sensor fusion logic in localization components
+- Analyzing obstacle avoidance behavior
+- Creating API documentation from existing code
+
+---
+
 ## 🔍 Reverse Engineering Task
 
 **What code/component needs to be reverse-engineered:**

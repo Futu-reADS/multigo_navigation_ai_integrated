@@ -22,6 +22,22 @@ NC='\033[0m' # No Color
 ERRORS=0
 WARNINGS=0
 
+print_banner() {
+    echo ""
+    echo -e "${BLUE}╔════════════════════════════════════════════════════════════╗${NC}"
+    echo -e "${BLUE}║                                                            ║${NC}"
+    echo -e "${BLUE}║           🔍 Automation System Verification 🔍             ║${NC}"
+    echo -e "${BLUE}║                                                            ║${NC}"
+    echo -e "${BLUE}╚════════════════════════════════════════════════════════════╝${NC}"
+    echo ""
+    echo -e "${YELLOW}This script will verify:${NC}"
+    echo -e "  ✓ Dependencies (gh, jq, node, git)"
+    echo -e "  ✓ File structure (scripts, hooks, documentation)"
+    echo -e "  ✓ ROS 2 project structure (navigation packages)"
+    echo -e "  ✓ GitHub integration (workflows, templates)"
+    echo ""
+}
+
 print_header() {
     echo -e "${BLUE}════════════════════════════════════════${NC}"
     echo -e "${BLUE}  $1${NC}"
@@ -45,6 +61,12 @@ print_warning() {
 print_info() {
     echo -e "${YELLOW}ℹ${NC} $1"
 }
+
+###############################################################################
+# Main Execution
+###############################################################################
+
+print_banner
 
 ###############################################################################
 # Check Dependencies

@@ -6,6 +6,27 @@ labels: enhancement
 assignees: ''
 ---
 
+## 📌 When to Use This Template
+
+Use **Feature Request** (not Enhancement) when proposing:
+- **New** capabilities that don't currently exist
+- **New** sensor or hardware support
+- **New** navigation behaviors or modes
+- **New** integrations or interfaces
+
+**Examples of Feature Requests:**
+- "Add support for 3D LiDAR sensors"
+- "Implement multi-robot path coordination"
+- "Create web-based visualization dashboard"
+- "Add dynamic obstacle prediction capability"
+
+**Not Feature Requests** (use Enhancement instead):
+- Improving existing path planning performance (optimization)
+- Refactoring existing docking code (refactoring)
+- Making current sensors more accurate (improvement)
+
+---
+
 ## 🎯 Feature Summary
 
 **Brief description of the proposed feature:**
