@@ -176,6 +176,7 @@ package_name/
 - Ignore the automation scripts
 - Write vague commit messages or comments
 - Commit without understanding which phase we're in
+- **NEVER use the bot mention (with @) in issue descriptions, comments, or documentation - always say "Claude bot" instead to avoid accidental triggers**
 
 ---
 
