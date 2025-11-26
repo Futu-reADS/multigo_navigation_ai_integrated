@@ -68,10 +68,10 @@ jobs:
           echo "reviewable_additions=$REVIEWABLE_ADDITIONS" >> $GITHUB_OUTPUT
 
           # Check reviewable size (not total size)
-          if [ "$REVIEWABLE_FILES" -gt 50 ]; then
+          if [ "$REVIEWABLE_FILES" -gt 100 ]; then
             echo "⚠️ Large PR detected: $REVIEWABLE_FILES reviewable files changed"
             echo "skip=true" >> $GITHUB_OUTPUT
-          elif [ "$REVIEWABLE_ADDITIONS" -gt 2000 ]; then
+          elif [ "$REVIEWABLE_ADDITIONS" -gt 5000 ]; then
             echo "⚠️ Large PR detected: $REVIEWABLE_ADDITIONS reviewable lines added"
             echo "skip=true" >> $GITHUB_OUTPUT
           else
