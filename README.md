@@ -3,50 +3,104 @@
 ## Overview
 Multi-Go autonomous robot for wheelchair and cart mobility. 
 
-**Keywords:** ARuco, Navigation stack, docking
+**Keywords:** ArUco, Navigation stack, docking
 
 
 ## Prerequisites
+- [Ubuntu 22.04](https://releases.ubuntu.com/22.04/)
+- [ROS2 Humble](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debs.html)
+- Gazebo - follow the installation steps mentioned below
+- [NAV2](https://emanual.robotis.com/docs/en/platform/turtlebot3/quick-start/) - follow the installation steps mentioned below
+- ~~OpenCV with contrib~~
 
-- ROS2 Humble / Ubuntu 22.04 / NAV2 / Gazebo Simulator with ROS2 packages
+
+Run:
+
+    echo 'source /opt/ros/humble/setup.bash' >> ~/.bashrc
+    sudo apt update
+~~sudo apt upgrade~~
+
+Reload or open a new terminal.
+
+### Installing Gazebo
+    sudo apt install ros-humble-gazebo-* ros-humble-gazebo-ros-pkgs ros-humble-gazebo-ros
+
+### Installing NAV2
+    sudo apt install ros-humble-navigation2 ros-humble-nav2-bringup ros-$ROS_DISTRO-turtlebot3*
+~~sudo apt install ros-humble-cartographer~~
+~~sudo apt install ros-humble-cartographer-ros~~
+
+#### ~~Install TurtleBot3 Packages~~ 
+Note: These commands are no longer needed as the previous command is a one line install command. 
+
+    mkdir -p ~/turtlebot3_ws/src
+    cd ~/turtlebot3_ws/src/
+    git clone -b humble https://github.com/ROBOTIS-GIT/DynamixelSDK.git
+    git clone -b humble https://github.com/ROBOTIS-GIT/turtlebot3_msgs.git
+    git clone -b humble https://github.com/ROBOTIS-GIT/turtlebot3.git
+    git clone -b humble https://github.com/ROBOTIS-GIT/turtlebot3_simulations.git
+    sudo apt-get install ros-humble-turtlebot3-gazebo
+    cd ~/turtlebot3_ws
+    colcon build --symlink-install
+    echo 'source ~/turtlebot3_ws/install/setup.bash' >> ~/.bashrc
+    source ~/.bashrc
+
+    sudo apt install python3-colcon-common-extensions ##TO CHECK
+
+#### Configure Environment for TurtleBot3
+    echo 'export ROS_DOMAIN_ID=30 #TURTLEBOT3' >> ~/.bashrc
+    echo 'source /usr/share/gazebo/setup.sh' >> ~/.bashrc
+    source ~/.bashrc
+
+### Optional - Testing NAV2 and Gazebo Installation 
+    export TURTLEBOT3_MODEL=waffle
+    ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
+    ros2 run turtlebot3_gazebo turtlebot3_drive
+    ros2 launch turtlebot3_bringup rviz2.launch.py
+
+If all of the prerequisites have been installed properly, Gazebo and RVIZ would open and the turtlebot would drive autonomously in both.
 
 
-## Installation
+
+## Installation of MultiGo
+Open a new terminal window and run these commands:
 
 	sudo apt update
-	sudo apt install gazebo ros-humble-gazebo-ros-pkgs ros-humble-gazebo-ros
-	sudo apt install ros-humble-gazebo-*
-	sudo apt install ros-$ROS_DISTRO-gazebo-ros-pkgs
-	sudo apt install ros-humble-pcl-conversions ros-humble-pcl-msgs python3-pip
+	sudo apt install python3-pip
 	pip3 install pyyaml
-	sudo apt install ros-$ROS_DISTRO-rtabmap-ros
+ 	pip install pyserial
+	sudo apt install python3-serial ros-humble-pointcloud-to-laserscan ros-humble-laser-filters
  	sudo apt-get install ros-humble-pcl-ros
- 	sudo apt install ros-humble-rtabmap-slam
- 	sudo apt install ros-humble-pointcloud-to-laserscan
 	sudo apt update
 
-Install NAV2 
+~~sudo apt install ros-$ROS_DISTRO-rtabmap-ros~~ 
+~~sudo apt install ros-humble-rtabmap-slam~~
 
-	https://emanual.robotis.com/docs/en/platform/turtlebot3/quick-start/
+### Cloning Packages
+Open a new terminal window and run these commands:
 
+    git config --global submodule.recurse true
+    git clone --recurse-submodules -b feature/localization git@github.com:Futu-reADS/multigo_navigation.git
+    cd multigo_navigation
+    vcs import src < multigo.repos --recursive
+    vcs pull src
 
-
-### Cloning
-
-    git clone git@github.com:Futu-reADS/multigo_navigation.git
 
 ### Install
     
-    cd ~/multigo
+    cd multigo_navigation
     rosdep update
     rosdep install --from-paths src --ignore-src -r -y
-    colcon build --symlink-install
+    colcon build --symlink-install --cmake-args -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 
-    
+
+
+Close all terminals and reopen them for the following:
+
 ## Run	
   Run following commands:
   
-    cd ~/multigo
+    cd multigo_navigation
     source install/setup.bash 
 
 Simulation:
@@ -65,4 +119,13 @@ Robot:
     ssh -X USER @ IP_Address
     source install/setup.bash
     ros2 launch boot rviz_launch.py
-	
+
+
+## Uninstall 
+    ros2 launch boot simulation.launch.py 
+    sudo apt-get remove ros-humble-turtlebot3-gazebo ros-humble-pcl-ros
+    sudo apt remove ros-humble-grid-map ros-humble-pcl-conversions ros-humble-pcl-msgs python3-pip python3-serial ros-$ROS_DISTRO-rtabmap-ros ros-humble-rtabmap-slam ros-humble-pointcloud-to-laserscan ros-humble-laser-filters 
+    sudo apt remove ros-humble-gazebo-* ros-humble-gazebo-ros-pkgs ros-humble-gazebo-ros ros-humble-cartographer ros-humble-cartographer-ros ros-humble-navigation2 ros-humble-nav2-bringup
+    sudo apt autoremove
+
+Delete folder "turtlebot3_ws" in Home directory
