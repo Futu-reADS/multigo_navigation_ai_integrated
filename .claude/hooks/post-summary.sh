@@ -75,8 +75,13 @@ IFS=$'\n\t'        # Prevent word splitting issues
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
-# Source coverage parsing helper
-source "$PROJECT_ROOT/scripts/parse-coverage.sh"
+# Source coverage parsing helper (optional)
+if [ -f "$PROJECT_ROOT/scripts/parse-coverage.sh" ]; then
+  source "$PROJECT_ROOT/scripts/parse-coverage.sh"
+else
+  # Provide stub function if parse-coverage.sh doesn't exist
+  parse_coverage_section() { echo ""; }
+fi
 
 # Debug logging (optional, controlled by DEBUG_POST_SUMMARY env var)
 DEBUG_LOG=".claude/post-summary-debug.log"
