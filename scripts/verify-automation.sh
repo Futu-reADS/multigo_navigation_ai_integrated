@@ -187,6 +187,38 @@ EOF
 fi
 
 ###############################################################################
+# Check ROS 2 Project Structure
+###############################################################################
+
+echo ""
+print_header "Checking ROS 2 Project Structure"
+
+# Check if src/ directory exists
+if [ -d "src" ]; then
+    print_success "src/ directory found"
+
+    # Check key ROS 2 navigation packages
+    ROS2_PACKAGES=("nav_control" "nav_docking" "nav_goal" "aruco_detect" "camera_publisher")
+    FOUND_PACKAGES=0
+
+    for pkg in "${ROS2_PACKAGES[@]}"; do
+        if [ -d "src/$pkg" ]; then
+            ((FOUND_PACKAGES++))
+        fi
+    done
+
+    if [ $FOUND_PACKAGES -eq ${#ROS2_PACKAGES[@]} ]; then
+        print_success "All key ROS 2 packages found ($FOUND_PACKAGES/${#ROS2_PACKAGES[@]})"
+    elif [ $FOUND_PACKAGES -gt 0 ]; then
+        print_warning "Some ROS 2 packages found ($FOUND_PACKAGES/${#ROS2_PACKAGES[@]})"
+    else
+        print_warning "No key ROS 2 packages found in src/"
+    fi
+else
+    print_warning "src/ directory not found (not in ROS 2 workspace root?)"
+fi
+
+###############################################################################
 # Check GitHub Integration
 ###############################################################################
 
