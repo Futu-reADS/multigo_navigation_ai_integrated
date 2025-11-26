@@ -310,7 +310,7 @@ Time: YYYY-MM-DD HH:MM
 
 ---
 
-@claude review it  (automatically added to PR comments only)
+(Claude bot review trigger - automatically added to PR comments only)
 ```
 
 **Comment Structure Notes:**
@@ -319,13 +319,13 @@ Time: YYYY-MM-DD HH:MM
   - >3 lines: Collapsed for readability
 - **Request**: Formatted/contextualized description of the task
 - **Response/Changes Made**: What was accomplished
-- **@claude review it**: Automatically added to all PR update comments to trigger code review
+- **Review trigger**: Automatically added to all PR update comments to trigger code review
 
 **Posting Logic:**
 - If PR exists → Posts to **PR ONLY** (PR takes precedence)
 - If no PR → Posts to **Issue**
 - Never posts to both simultaneously
-- PR comments automatically trigger @claude review
+- PR comments automatically trigger Claude bot review
 
 ---
 
@@ -344,7 +344,7 @@ Time: YYYY-MM-DD HH:MM
 git push -u origin feature/{issue-number}--{description}
 ```
 
-**Create PR with @claude review request:**
+**Create PR with Claude bot review request:**
 
 ```bash
 # Create PR with comprehensive description
@@ -379,7 +379,7 @@ gh pr create --title "feat: add pagination to task list API (Issue #16)" --body 
 
 ---
 
-@claude review it
+(Add mention here to trigger Claude bot review if desired)
 EOF
 )"
 ```

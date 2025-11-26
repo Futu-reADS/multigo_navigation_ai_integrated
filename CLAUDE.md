@@ -40,8 +40,8 @@
 
 ### Phase 1: Specification & Review
 1. Issue created with feature specification
-2. @claude reviews specification (GitHub Actions)
-3. ClaudeCode reviews @claude's review
+2. Claude bot reviews specification (GitHub Actions)
+3. ClaudeCode reviews Claude bot's review
 4. Discussion/debate to reach consensus
 5. Final consensus documented
 6. Ready to implement ✅
@@ -56,7 +56,7 @@
 ### Phase 3: Pull Request
 1. Push branch: `git push -u origin feature/{issue-number}--{description}`
 2. Create PR with `gh pr create`
-3. @claude reviews PR (GitHub Actions)
+3. Claude bot reviews PR (GitHub Actions)
 4. Address feedback and post updates
 5. Merge when approved
 
@@ -167,11 +167,11 @@ tests/
 - **cleanup-after-merge.sh** - Clean up after PR merge
 
 **GitHub Actions:**
-- **@claude bot** - Reviews specifications and PRs (review-only mode)
+- **Claude bot** - Reviews specifications and PRs (review-only mode)
 - **ClaudeCode (you)** - Does actual implementation
 
 **Separation of Roles:**
-- @claude = Reviewer/Advisor (no code changes)
+- Claude bot = Reviewer/Advisor (no code changes)
 - ClaudeCode = Implementer (writes code)
 
 ---
