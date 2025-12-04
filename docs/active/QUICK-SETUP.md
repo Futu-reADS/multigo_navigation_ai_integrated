@@ -2,6 +2,9 @@
 
 **Time Required:** 30 minutes
 **Prerequisites:** Ubuntu 22.04, basic ROS 2 knowledge
+**Last Updated:** December 4, 2025
+
+**⚠️ Important:** This gets you running in simulation. For production deployment, see [IMPLEMENTATION-GUIDE.md](./IMPLEMENTATION-GUIDE.md) - the system needs bug fixes and safety features first!
 
 ---
 
@@ -95,13 +98,61 @@ ros2 topic pub /goal_pose geometry_msgs/PoseStamped "{
 - Install Gazebo: `sudo apt install ros-humble-gazebo-ros-pkgs`
 
 **Tests failing?**
-- Expected! 0% coverage currently. See IMPLEMENTATION-GUIDE for Phase 2.
+- Expected! 0% coverage currently. See [IMPLEMENTATION-GUIDE.md Phase 2](./IMPLEMENTATION-GUIDE.md#phase-2-testing-infrastructure) for testing plan.
 
 ---
 
-**Next Steps:**
-- Read: [START-HERE.md](./START-HERE.md)
-- Fix bugs: [IMPLEMENTATION-GUIDE.md - Phase 1](./IMPLEMENTATION-GUIDE.md#phase-1-critical-bugs--safety)
-- Understand system: [SYSTEM-ARCHITECTURE.md](./SYSTEM-ARCHITECTURE.md)
+## Known Issues ⚠️
 
-**Last Updated:** 2025-12-02
+**This system has critical bugs and is NOT production-ready!**
+
+See [ISSUES-AND-FIXES.md](./ISSUES-AND-FIXES.md) for details:
+- 🔴 **CRIT-01:** PID integral bug (docking won't be accurate)
+- 🔴 **CRIT-02:** Distance calculation bug (dual marker centering wrong)
+- 🔴 **CRIT-03:** No LiDAR during docking (blind to obstacles - UNSAFE!)
+- 🔴 **CRIT-04:** Zero test coverage (no regression protection)
+- 🔴 **CRIT-05:** No emergency stop (SAFETY ISSUE!)
+
+**Status:** 52% complete (47/91 requirements) - See [REQUIREMENTS.md](./REQUIREMENTS.md)
+
+---
+
+## Next Steps
+
+**1. Understand the System (30 min):**
+- Read: [START-HERE.md](./START-HERE.md) - Overview and navigation
+- Check: [REQUIREMENTS.md](./REQUIREMENTS.md) - What the system should do (91 requirements)
+- Review: [SYSTEM-ARCHITECTURE.md](./SYSTEM-ARCHITECTURE.md) - How it works
+
+**2. See What's Missing (15 min):**
+- Check: [REQUIREMENTS-TRACEABILITY.md](./REQUIREMENTS-TRACEABILITY.md) - Full requirement mapping
+- Review: [ISSUES-AND-FIXES.md](./ISSUES-AND-FIXES.md) - 28 known issues
+
+**3. Plan Implementation (1 hour):**
+- Read: [IMPLEMENTATION-GUIDE.md](./IMPLEMENTATION-GUIDE.md) - 16-week plan to production
+- Start with: [Phase 1 - Critical Bugs & Safety](./IMPLEMENTATION-GUIDE.md#phase-1-critical-bugs--safety)
+
+**4. Get Coding:**
+- Fix: [CRIT-01 PID Bug](./IMPLEMENTATION-GUIDE.md#task-11-fix-pid-integral-bug-4-hours) (4 hours)
+- Fix: [CRIT-02 Distance Bug](./IMPLEMENTATION-GUIDE.md#task-12-fix-dual-marker-distance-calculation-1-hour) (1 hour)
+- Then follow Phase 1 Week 2-4 for safety features
+
+---
+
+## Documentation Map
+
+```
+📂 docs/active/
+├── START-HERE.md                  ← Start here for overview
+├── QUICK-SETUP.md                 ← You are here (get it running)
+├── REQUIREMENTS.md                ← What needs to be built (91 requirements)
+├── REQUIREMENTS-TRACEABILITY.md   ← Requirement → Implementation mapping
+├── IMPLEMENTATION-GUIDE.md        ← How to fix everything (16 weeks)
+├── SYSTEM-ARCHITECTURE.md         ← How it works (current + proposed)
+└── ISSUES-AND-FIXES.md            ← What's broken (28 issues)
+```
+
+---
+
+**Last Updated:** December 4, 2025
+**System Status:** 🟡 Beta (52% complete) - Safe for supervised testing only after Phase 1 fixes

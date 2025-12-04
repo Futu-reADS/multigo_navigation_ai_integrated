@@ -1,7 +1,11 @@
 # Issues and Fixes - Complete Reference
 
-**Last Updated:** 2025-12-02
+**Last Updated:** December 4, 2025
 **Total Issues:** 28 (10 Critical, 8 High, 7 Medium, 3 Low)
+**Related Documents:**
+- [REQUIREMENTS.md](./REQUIREMENTS.md) - All 91 requirements
+- [REQUIREMENTS-TRACEABILITY.md](./REQUIREMENTS-TRACEABILITY.md) - Requirement-to-phase mapping
+- [IMPLEMENTATION-GUIDE.md](./IMPLEMENTATION-GUIDE.md) - Implementation plan
 
 ---
 
@@ -23,7 +27,9 @@
 
 ### CRIT-01: PID Integral Not Accumulating ⏱️ 4 hours
 
+**Requirements:** DR-2.1, DR-3.1 ([REQUIREMENTS.md](./REQUIREMENTS.md))
 **File:** `src/nav_docking/nav_docking.cpp:197`
+**Implementation:** [IMPLEMENTATION-GUIDE.md Task 1.1](./IMPLEMENTATION-GUIDE.md#task-11-fix-pid-integral-bug-4-hours)
 
 **Problem:** Integral term overwrites instead of accumulates
 ```cpp
@@ -46,7 +52,9 @@ integral_dist_ += error * callback_duration;  // Accumulate!
 
 ### CRIT-02: Dual Marker Distance Calculation ⏱️ 1 hour
 
+**Requirements:** DR-2.2 ([REQUIREMENTS.md](./REQUIREMENTS.md))
 **File:** `src/nav_docking/nav_docking.cpp:387, 503`
+**Implementation:** [IMPLEMENTATION-GUIDE.md Task 1.2](./IMPLEMENTATION-GUIDE.md#task-12-fix-dual-marker-distance-calculation-1-hour)
 
 **Problem:** Missing parentheses in average
 ```cpp
@@ -63,7 +71,9 @@ double distance = (left_x + right_x) / 2;  // = (left + right)/2
 
 ### HIGH-01: Uninitialized Variables ⏱️ 1 hour
 
+**Requirements:** General code quality (QR-3.1)
 **File:** `src/nav_docking/nav_docking.cpp` constructor
+**Implementation:** [IMPLEMENTATION-GUIDE.md Task 1.3](./IMPLEMENTATION-GUIDE.md#task-13-initialize-variables-1-hour)
 
 **Fix:** Initialize all member variables:
 ```cpp
@@ -81,6 +91,9 @@ NavDockingNode::NavDockingNode() : Node("nav_docking_node"),
 ## Phase 1: Safety Features (Weeks 2-4)
 
 ### CRIT-03: No LiDAR During Docking ⏱️ 20 hours
+
+**Requirements:** SR-2.2, DR-5.3 ([REQUIREMENTS.md](./REQUIREMENTS.md))
+**Implementation:** [IMPLEMENTATION-GUIDE.md Task 3.2](./IMPLEMENTATION-GUIDE.md#task-32-add-lidar-during-docking-20-hours)
 
 **Problem:** Vision-only = blind to obstacles
 
@@ -101,25 +114,27 @@ void scanCallback(LaserScan::SharedPtr msg) {
 
 ### CRIT-05: No Emergency Stop ⏱️ 12 hours
 
-**Fix:** Implement `/emergency_stop` topic, all motion nodes subscribe
+**Requirements:** SR-1.2 ([REQUIREMENTS.md](./REQUIREMENTS.md))
+**Implementation:** [IMPLEMENTATION-GUIDE.md Task 2.2](./IMPLEMENTATION-GUIDE.md#task-22-implement-emergency-stop-12-hours)
 
-**Reference:** [IMPLEMENTATION-GUIDE.md - Task 2.2](./IMPLEMENTATION-GUIDE.md#task-22-implement-emergency-stop-12-hours)
+**Fix:** Implement `/emergency_stop` topic, all motion nodes subscribe
 
 ---
 
 ### CRIT-06: No Teaching Mode ⏱️ 40 hours
 
-**Phase 4 task**
+**Requirements:** MCR-5.1, MCR-5.2 ([REQUIREMENTS.md](./REQUIREMENTS.md))
+**Implementation:** [IMPLEMENTATION-GUIDE.md Week 13-14](./IMPLEMENTATION-GUIDE.md#week-13-14-teaching-mode)
+**Phase:** Phase 4
 
 **What:** Human-guided map building + waypoint saving
-
-**Reference:** [IMPLEMENTATION-GUIDE.md - Week 13-14](./IMPLEMENTATION-GUIDE.md#week-13-14-teaching-mode)
 
 ---
 
 ### CRIT-07: No Cliff Detection ⏱️ 30 hours
 
-**Phase 4 task** (hardware decision needed)
+**Requirements:** (Future - hardware dependent)
+**Phase:** Phase 4/Future (hardware decision needed)
 
 **What:** IR sensors or depth camera to detect stairs/drops
 
@@ -127,17 +142,21 @@ void scanCallback(LaserScan::SharedPtr msg) {
 
 ### CRIT-08: No Geofencing ⏱️ 16 hours
 
-**Phase 1 task (basic), Phase 4 (full)**
+**Requirements:** SR-6.1 ([REQUIREMENTS.md](./REQUIREMENTS.md))
+**Implementation:** [IMPLEMENTATION-GUIDE.md Task 4.1](./IMPLEMENTATION-GUIDE.md#task-41-basic-geofencing-16-hours)
+**Phase:** Phase 1 (basic), Phase 4 (full)
 
 **What:** Keep-out zones + allowed boundaries
-
-**Reference:** [IMPLEMENTATION-GUIDE.md - Task 4.1](./IMPLEMENTATION-GUIDE.md#task-41-basic-geofencing-16-hours)
 
 ---
 
 ## Phase 2: Testing
 
 ### CRIT-04: Zero Test Coverage ⏱️ 100 hours
+
+**Requirements:** QR-1.1, QR-1.2, QR-1.3 ([REQUIREMENTS.md](./REQUIREMENTS.md))
+**Implementation:** [IMPLEMENTATION-GUIDE.md Phase 2](./IMPLEMENTATION-GUIDE.md#phase-2-testing-infrastructure)
+**Phase:** Phase 2
 
 **Goal:** 80% automated coverage
 
@@ -146,13 +165,15 @@ void scanCallback(LaserScan::SharedPtr msg) {
 - Integration tests: 30 hours (10-15 tests)
 - CI/CD: 10 hours
 
-**Reference:** [IMPLEMENTATION-GUIDE.md - Phase 2](./IMPLEMENTATION-GUIDE.md#phase-2-testing-infrastructure)
-
 ---
 
 ## Phase 3: ROS 2 Improvements
 
 ### CRIT-09: No Holonomic Motion Config ⏱️ 8 hours
+
+**Requirements:** NR-2.2 ([REQUIREMENTS.md](./REQUIREMENTS.md))
+**Implementation:** [IMPLEMENTATION-GUIDE.md Phase 3 Week 11](./IMPLEMENTATION-GUIDE.md#phase-3-ros-2-best-practices)
+**Phase:** Phase 3
 
 **Problem:** Mecanum wheels not used (max_vel_y = 0)
 
@@ -165,6 +186,10 @@ acc_lim_y: 2.0
 ---
 
 ### CRIT-10: No Action Timeouts ⏱️ 12 hours
+
+**Requirements:** SR-3.1 ([REQUIREMENTS.md](./REQUIREMENTS.md))
+**Implementation:** [IMPLEMENTATION-GUIDE.md Phase 3 Week 12](./IMPLEMENTATION-GUIDE.md#phase-3-ros-2-best-practices)
+**Phase:** Phase 3
 
 **Problem:** Actions can hang indefinitely
 

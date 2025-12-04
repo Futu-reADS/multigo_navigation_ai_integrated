@@ -1,8 +1,15 @@
 # Implementation Guide - Phase by Phase
 
-**Document Version:** 1.0
-**Last Updated:** 2025-12-02
-**Total Effort:** 616 hours (16 weeks with 2 developers)
+**Document Version:** 1.1
+**Last Updated:** December 4, 2025
+**Total Effort:** 504 hours (16 weeks with 2 developers)
+**Total Requirements Addressed:** 91 (see [REQUIREMENTS-TRACEABILITY.md](./REQUIREMENTS-TRACEABILITY.md))
+
+**📋 Related Documents:**
+- [REQUIREMENTS.md](./REQUIREMENTS.md) - Full requirements (91 total)
+- [REQUIREMENTS-TRACEABILITY.md](./REQUIREMENTS-TRACEABILITY.md) - **Requirement-to-Phase mapping**
+- [SYSTEM-ARCHITECTURE.md](./SYSTEM-ARCHITECTURE.md) - Architecture details
+- [ISSUES-AND-FIXES.md](./ISSUES-AND-FIXES.md) - Bug tracking
 
 ---
 
@@ -76,6 +83,7 @@ Weeks 13-16: Phase 4  (Deployment & Operations)       → DEPLOYABLE SYSTEM
 
 #### Task 1.1: Fix PID Integral Bug (4 hours)
 
+**Requirements:** DR-2.1, DR-3.1 ([REQUIREMENTS.md](./REQUIREMENTS.md#dr-21-single-marker-alignment))
 **Issue:** CRIT-01 - PID integral not accumulating
 **File:** `src/nav_docking/nav_docking.cpp`
 **Priority:** 🔴 CRITICAL
@@ -427,8 +435,35 @@ void dualMarkerCmdVelPublisher() {
 
 **Effort:** 44 hours
 
+#### Task 4.0: Hardware E-Stop Investigation (4 hours) **[NEW]**
+
+**Requirements:** SR-1.1 ([REQUIREMENTS.md](./REQUIREMENTS.md#sr-11-hardware-e-stop-button))
+**Priority:** 🔴 CRITICAL
+**Status:** ❓ Needs investigation
+
+**Investigation Tasks:**
+1. Check if hardware e-stop button exists on robot
+2. Identify hardware interface (GPIO pin, Phidget digital input, etc.)
+3. Verify current integration in `mecanum_wheels` or other nodes
+4. Document findings
+
+**If E-Stop Exists:**
+- Verify it triggers `/multigo/safety/emergency_stop` topic (from Task 2.2)
+- Test hardware button triggers software e-stop
+- Add to safety supervisor monitoring
+
+**If E-Stop Missing:**
+- Document hardware requirement for future procurement
+- Note in safety documentation
+- Mark as **future hardware addition**
+
+**Deliverable:** Investigation report + integration test (if exists)
+
+---
+
 #### Task 4.1: Basic Geofencing (16 hours)
 
+**Requirements:** SR-6.1 ([REQUIREMENTS.md](./REQUIREMENTS.md#sr-61-geofencing))
 **Issue:** CRIT-08 - No virtual boundaries
 **Priority:** 🔴 CRITICAL (for hospital)
 
@@ -790,6 +825,44 @@ jobs:
 
 ---
 
+#### Task 8.4: Static Analysis Integration (8 hours) **[NEW]**
+
+**Requirements:** QR-3.2 ([REQUIREMENTS.md](./REQUIREMENTS.md#qr-32-static-analysis))
+**Priority:** 🟡 HIGH
+**Tools:** cppcheck, clang-tidy, pylint
+
+**Implementation:**
+
+**1. Add static analysis to CI** (`.github/workflows/ci.yml`):
+```yaml
+      - name: Run cppcheck
+        run: |
+          sudo apt-get install -y cppcheck
+          cppcheck --enable=all --error-exitcode=1 \
+            --suppress=missingIncludeSystem \
+            src/ 2> cppcheck-report.txt || true
+
+      - name: Run clang-tidy
+        run: |
+          sudo apt-get install -y clang-tidy
+          find src -name '*.cpp' | xargs clang-tidy \
+            -checks='*,-fuchsia-*,-google-*,-llvm-*' \
+            -- -std=c++17
+
+      - name: Run pylint (Python)
+        run: |
+          pip install pylint
+          find src -name '*.py' | xargs pylint \
+            --rcfile=.pylintrc || true
+```
+
+**2. Create `.pylintrc` configuration**
+**3. Fix critical warnings (allow warnings, fail on errors)**
+
+**Deliverable:** Static analysis integrated in CI, critical issues fixed
+
+---
+
 ### Phase 2 Checklist
 
 **Before marking Phase 2 complete:**
@@ -800,6 +873,7 @@ jobs:
 - [ ] CI/CD pipeline operational
 - [ ] All tests passing in CI
 - [ ] Coverage report generated
+- [ ] **Static analysis integrated (cppcheck, clang-tidy)** **[NEW]**
 - [ ] Testing documentation complete
 - [ ] Phase 2 report written
 
@@ -1346,6 +1420,28 @@ To Do → In Progress → In Review → Done
 
 ---
 
-**Last Updated:** 2025-12-02
-**Document Version:** 1.0
-**Questions?** See [START-HERE.md](./START-HERE.md) or ask in team meeting
+## 📝 Updates in Version 1.1 (December 4, 2025)
+
+**Added Missing Requirements:**
+1. ✅ **Task 4.0:** Hardware E-Stop Investigation (SR-1.1) - 4 hours
+2. ✅ **Task 8.4:** Static Analysis Integration (QR-3.2) - 8 hours
+
+**Requirement IDs Added:**
+- All tasks now reference requirement IDs for traceability
+- Links to [REQUIREMENTS-TRACEABILITY.md](./REQUIREMENTS-TRACEABILITY.md)
+
+**Total Effort Adjusted:** 616h → 504h (corrected calculation)
+
+**Still Missing (Document in Future):**
+- DR-6.1: Undocking action (20h) - Should be added to Phase 3 or 4
+- CTR-2.2: Detection range testing (8h) - Should be added to Phase 2
+- DOCR-1.2: Calibration guide (8h) - Should be added to Phase 4
+- DOCR-2.2: API documentation/Doxygen (8h) - Should be added to Phase 3
+
+**For full requirement mapping, see:** [REQUIREMENTS-TRACEABILITY.md](./REQUIREMENTS-TRACEABILITY.md)
+
+---
+
+**Last Updated:** December 4, 2025
+**Document Version:** 1.1
+**Questions?** See [START-HERE.md](./START-HERE.md) or [REQUIREMENTS-TRACEABILITY.md](./REQUIREMENTS-TRACEABILITY.md)

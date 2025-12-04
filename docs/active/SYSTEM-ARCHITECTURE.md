@@ -1,8 +1,14 @@
 # System Architecture - Current & Proposed
 
-**Last Updated:** 2025-12-02
-**Document Version:** 1.0
-**Status:** Current (61% complete) → Proposed (4 phases to 100%)
+**Last Updated:** December 4, 2025
+**Document Version:** 1.1
+**Status:** Current (52% complete - 47/91 requirements) → Proposed (4 phases to 100%)
+
+**📋 Related Documents:**
+- [REQUIREMENTS.md](./REQUIREMENTS.md) - All 91 requirements
+- [REQUIREMENTS-TRACEABILITY.md](./REQUIREMENTS-TRACEABILITY.md) - Requirement-to-phase mapping
+- [IMPLEMENTATION-GUIDE.md](./IMPLEMENTATION-GUIDE.md) - Implementation plan
+- [ISSUES-AND-FIXES.md](./ISSUES-AND-FIXES.md) - Known issues
 
 ---
 
@@ -732,18 +738,24 @@ double center = (left_x + right_x) / 2;    // = (left + right) / 2
 
 ## 6. Proposed Safety Architecture (Phase 1)
 
+**Requirements Addressed:** SR-1.1, SR-1.2, SR-2.2, SR-5.1, SR-5.2, SR-6.1 ([REQUIREMENTS.md](./REQUIREMENTS.md))
+**Implementation:** [IMPLEMENTATION-GUIDE.md Phase 1 Weeks 2-4](./IMPLEMENTATION-GUIDE.md#phase-1-critical-bugs--safety)
+**Issues Fixed:** CRIT-03 (LiDAR), CRIT-05 (E-Stop), CRIT-08 (Geofencing)
+
 ### 6.1 Problem Statement
 
 **Current Issues:**
-- ❌ No LiDAR monitoring during docking (blind to obstacles)
-- ❌ No emergency stop mechanism
-- ❌ No safety layer with override authority
+- ❌ No LiDAR monitoring during docking (blind to obstacles) - **SR-2.2, DR-5.3**
+- ❌ No emergency stop mechanism - **SR-1.2**
+- ❌ No safety layer with override authority - **SR-5.1**
 - ❌ Safety logic scattered across nodes
+- ❌ No geofencing/keep-out zones - **SR-6.1**
 
 **Result:** System is **NOT** safe for production deployment
 
 ### 6.2 Proposed Safety Layer
 
+**Requirements:** SR-5.1, SR-5.2 ([REQUIREMENTS.md](./REQUIREMENTS.md))
 **Design Principle:** Orthogonal safety layer with override authority over ALL motion
 
 ```
@@ -1004,10 +1016,13 @@ private:
 
 ## 7. Proposed State Management (Phase 1)
 
+**Requirements Addressed:** MCR-3.1 ([REQUIREMENTS.md](./REQUIREMENTS.md))
+**Implementation:** [IMPLEMENTATION-GUIDE.md Phase 1 Week 2](./IMPLEMENTATION-GUIDE.md#week-2-safety-architecture-design)
+
 ### 7.1 Problem Statement
 
 **Current Issues:**
-- ❌ No explicit state tracking ("What state is the robot in?")
+- ❌ No explicit state tracking ("What state is the robot in?") - **MCR-3.1**
 - ❌ Hard to debug ("Where did it fail?")
 - ❌ Hard to extend (adding new steps requires code changes)
 - ❌ No visualization of behavior
@@ -1229,8 +1244,13 @@ ros2 service call /mission/trigger_approach std_srvs/Trigger
 
 ## 8. Proposed ROS 2 Improvements (Phase 3)
 
+**Requirements Addressed:** QR-4.1, QR-5.1, QR-7.1, MR-4.1, MCR-2.3, SR-3.1, NR-2.2 ([REQUIREMENTS.md](./REQUIREMENTS.md))
+**Implementation:** [IMPLEMENTATION-GUIDE.md Phase 3 Weeks 9-12](./IMPLEMENTATION-GUIDE.md#phase-3-ros-2-best-practices)
+**Issues Fixed:** CRIT-09 (Holonomic), CRIT-10 (Timeouts)
+
 ### 8.1 Lifecycle Nodes
 
+**Requirements:** QR-4.1 ([REQUIREMENTS.md](./REQUIREMENTS.md))
 **Current Issue:** Nodes start immediately, no clean startup/shutdown
 
 **Proposed:** Convert critical nodes to lifecycle nodes
@@ -1656,7 +1676,11 @@ Examples:
 
 ## 9. Proposed Testing Architecture (Phase 2)
 
-**Current Status:** 0% test coverage ❌
+**Requirements Addressed:** QR-1.1, QR-1.2, QR-1.3, QR-3.2 ([REQUIREMENTS.md](./REQUIREMENTS.md))
+**Implementation:** [IMPLEMENTATION-GUIDE.md Phase 2 Weeks 5-8](./IMPLEMENTATION-GUIDE.md#phase-2-testing-infrastructure)
+**Issue Fixed:** CRIT-04 (Zero test coverage)
+
+**Current Status:** 0% test coverage ❌ - **QR-1.1**
 
 **Proposed Goal:** 80%+ coverage ✅
 
@@ -2047,8 +2071,13 @@ jobs:
 
 ## 10. Proposed Deployment Architecture (Phase 4)
 
+**Requirements Addressed:** DPR-1.1, DPR-1.2, DPR-2.1, LIR-2.3, QR-6.1, MCR-5.1, MCR-5.2, DOCR-1.1 ([REQUIREMENTS.md](./REQUIREMENTS.md))
+**Implementation:** [IMPLEMENTATION-GUIDE.md Phase 4 Weeks 13-16](./IMPLEMENTATION-GUIDE.md#phase-4-deployment--operations)
+**Issue Fixed:** CRIT-06 (Teaching mode)
+
 ### 10.1 Docker Deployment
 
+**Requirements:** DPR-1.1, DPR-1.2, QR-6.1 ([REQUIREMENTS.md](./REQUIREMENTS.md))
 **Purpose:** Containerized deployment for easy replication
 
 **Docker Compose Configuration:**
@@ -2509,19 +2538,44 @@ ros2 launch multigo_launch run.launch.py map:=hospital_floor2.db
 
 ---
 
-## Total Effort: 616 hours (16 weeks with 2 developers)
+## Total Effort: 504 hours (16 weeks with 2 developers)
+
+*Note: Updated from 616h after requirement analysis and effort refinement*
 
 ---
 
 **Next Steps:**
 1. Review this document with team
 2. Approve architecture changes
-3. Start [IMPLEMENTATION-GUIDE.md](./IMPLEMENTATION-GUIDE.md) Phase 1
-4. Track progress weekly
+3. Review [REQUIREMENTS-TRACEABILITY.md](./REQUIREMENTS-TRACEABILITY.md) for requirement mapping
+4. Start [IMPLEMENTATION-GUIDE.md](./IMPLEMENTATION-GUIDE.md) Phase 1
+5. Track progress weekly using requirement IDs
 
 **Questions?** See [START-HERE.md](./START-HERE.md) for navigation help
 
 ---
 
-**Last Updated:** 2025-12-02
-**Document Version:** 1.0
+## Document History
+
+### Version 1.1 (December 4, 2025)
+**Changes:**
+- ✅ Added requirement cross-references to all sections
+- ✅ Updated completion percentage: 61% → 52% (91 requirements vs 77)
+- ✅ Added links to REQUIREMENTS-TRACEABILITY.md
+- ✅ Updated total effort: 616h → 504h (corrected calculation)
+- ✅ Added requirement IDs to all proposed architecture sections:
+  - Section 6: Safety (SR-1.1, SR-1.2, SR-2.2, SR-5.1, SR-5.2, SR-6.1)
+  - Section 7: State Management (MCR-3.1)
+  - Section 8: ROS 2 Improvements (QR-4.1, QR-5.1, QR-7.1, MR-4.1, MCR-2.3, SR-3.1, NR-2.2)
+  - Section 9: Testing (QR-1.1, QR-1.2, QR-1.3, QR-3.2)
+  - Section 10: Deployment (DPR-1.1, DPR-1.2, DPR-2.1, LIR-2.3, QR-6.1, MCR-5.1, MCR-5.2, DOCR-1.1)
+
+### Version 1.0 (December 2, 2025)
+- Initial comprehensive architecture analysis
+- Current + Proposed architecture documented
+- 4-phase implementation plan outlined
+
+---
+
+**Last Updated:** December 4, 2025
+**Document Version:** 1.1
