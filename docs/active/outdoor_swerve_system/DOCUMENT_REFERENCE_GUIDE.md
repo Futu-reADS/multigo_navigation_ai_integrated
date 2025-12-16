@@ -50,17 +50,30 @@ This guide helps different stakeholders navigate the complete documentation set 
 - `REQUIREMENTS_TRACEABILITY_MATRIX.md` - Verify 100% coverage
 - `PERFORMANCE_REQUIREMENTS.md` - Budget and performance targets
 
+📄 **Timeline & Planning (CRITICAL)**
+- `PROJECT_TIMELINE_WITH_AI.md` - Complete project timeline (24 weeks, AI-accelerated)
+  - Development periods per subsystem (with AI acceleration factors)
+  - Parallel work opportunities
+  - Resource allocation (1-2 developers + tester)
+  - Risk management and contingency planning
+- `COMPLETE_TESTING_PLAN_WITH_TIMELINE.md` - Comprehensive testing plan
+  - 3-tier testing strategy (unit → integration → field)
+  - Testing timeline per subsystem
+  - 376+ test cases (88% AI-generated)
+  - Field validation scenarios
+
 **When to Use:**
-- Project kickoff: Read System Requirements
-- Weekly status: Check Traceability Matrix
-- Budget review: Reference Hardware Requirements
-- Stakeholder updates: Use Performance Requirements metrics
+- Project kickoff: Read System Requirements + Project Timeline
+- Weekly status: Check Timeline milestones + Testing progress
+- Budget review: Reference Hardware Requirements BOM + Timeline resource allocation
+- Stakeholder updates: Use Performance Requirements metrics + Milestone tracking
 
 **Action Items:**
 - [ ] Verify all 92 system requirements have subsystem breakdown
-- [ ] Track implementation progress via traceability matrix
+- [ ] Track implementation progress via timeline milestones (weekly)
 - [ ] Monitor cost against Hardware Requirements BOM
 - [ ] Report performance against acceptance criteria
+- [ ] Track testing progress (376+ test cases, 87%+ coverage target)
 
 ---
 
@@ -319,28 +332,47 @@ This guide helps different stakeholders navigate the complete documentation set 
   - Acceptance criteria (MVP and production)
   - Test automation (CI/CD)
 
+📄 **Testing Plan with Timeline (NEW - CRITICAL)**
+- `COMPLETE_TESTING_PLAN_WITH_TIMELINE.md`
+  - 3-tier testing strategy (unit → integration → field)
+  - Testing timeline per subsystem (detailed schedule)
+  - 376+ test cases (88% AI-generated, 12% manual)
+  - Code coverage targets (87%+ line, 74%+ branch)
+  - Field validation scenarios with acceptance criteria
+  - AI-accelerated test generation and analysis
+
 📄 **Phase 1: Traceability Matrix**
 - `REQUIREMENTS_TRACEABILITY_MATRIX.md`
   - Verify test coverage for all requirements
 
+📄 **Project Timeline**
+- `PROJECT_TIMELINE_WITH_AI.md`
+  - Testing timeline integrated with development
+  - Resource allocation (1-2 developers + dedicated tester)
+
 **Testing Workflow:**
-1. **Requirements coverage:** Map each requirement to test cases
-2. **Unit testing:** Follow examples in Testing Guide
-3. **Integration testing:** Use Gazebo simulation scenarios
-4. **Field testing:** Execute 5 outdoor scenarios (500m nav, docking, etc.)
-5. **Acceptance:** Validate against MVP/production criteria
-6. **Automation:** Setup CI/CD pipeline (GitHub Actions)
+1. **Requirements coverage:** Map each requirement to test cases (376+ total)
+2. **Unit testing (AI-accelerated):** AI generates 80%+ test cases, developer reviews/refines
+3. **Integration testing:** Use Gazebo simulation + ROS 2 launch tests
+4. **Field testing (incremental):** Test each subsystem after development (0.5-1.5 weeks per subsystem)
+5. **Acceptance:** Validate against MVP criteria (>90% mission success, Week 24)
+6. **Automation:** CI/CD pipeline (GitHub Actions, automated test execution)
 
 **Key Metrics:**
-- Code coverage target: 80%+ (line), 70%+ (branch)
+- Code coverage target: 87%+ (line), 74%+ (branch)
+- Total test cases: 376+ (88% AI-generated)
 - MVP success criteria: >90% mission success rate
 - Production success criteria: >95% mission success rate
 - Docking precision: ±5mm (outdoor), ±2mm (indoor goal)
+- Field testing duration: ~10 weeks (spread across 24-week project)
 
 **Reference Sections:**
 - Unit test examples: `COMPLETE_TESTING_GUIDE.md:30-150`
 - Field test scenarios: `COMPLETE_TESTING_GUIDE.md:220-350`
 - Acceptance criteria: `COMPLETE_TESTING_GUIDE.md:400-450`
+- **NEW:** Testing timeline by subsystem: `COMPLETE_TESTING_PLAN_WITH_TIMELINE.md:30-400`
+- **NEW:** AI-accelerated test generation: `COMPLETE_TESTING_PLAN_WITH_TIMELINE.md:40-60`
+- **NEW:** Field validation plan (Week 23-24): `COMPLETE_TESTING_PLAN_WITH_TIMELINE.md:500-550`
 
 ---
 
