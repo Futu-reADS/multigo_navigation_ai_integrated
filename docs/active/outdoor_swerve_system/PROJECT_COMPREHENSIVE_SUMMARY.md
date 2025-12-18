@@ -360,22 +360,7 @@ Independent teams with clear interfaces → Parallel development possible
 
 ---
 
-### 10. Black Sesame Technology Analysis
-
-**Source:** Company research for potential partnership (January 5, 2026 meeting)
-
-**What It Provided:**
-- Hardware alternative analysis: Black Sesame A1000 Pro chip
-- 160 TOPS computing power, 6.0 TOPS/W efficiency
-- 2.2× more energy efficient than NVIDIA Orin
-- 40-60% lower cost than NVIDIA Orin
-
-**Decision Impact:**
-Not immediately relevant to current project (using AMD Ryzen 7 7840HS), but good reference for future cost reduction.
-
----
-
-### 11. Japanese Translation Requirement
+### 10. Japanese Translation Requirement
 
 **Source:** Stakeholder communication needs
 
