@@ -1,144 +1,237 @@
-# MultiGo Navigation System - Documentation
+# MultiGo Documentation
 
-**Status:** 🟡 Beta (61% complete) - 16 weeks to production
-**Last Updated:** 2025-12-02
-
----
-
-## ⚡ Quick Start (5 Seconds)
-
-**Read this one document:** [active/START-HERE.md](active/START-HERE.md) ⭐
-
-That's it. Everything else follows from there.
+**Project:** Autonomous Wheelchair Transport Robot (Outdoor-First, Indoor-Compatible)
+**Type:** Pilot Project (1-2 vehicles, single facility)
+**Technology:** ROS 2 Humble, Swerve Drive, NDT Localization, ArUco Docking
+**Last Updated:** December 19, 2025
 
 ---
 
-## 📚 Documentation Structure
+## 🌐 Languages / 言語
 
-### ✅ **`active/` - Read These (5 Documents)**
+**This documentation is available in two languages:**
 
-The **ONLY** documents you need to read:
+| Language | Folder | Status | Purpose |
+|----------|--------|--------|---------|
+| 🇬🇧 **English** | `multigo/` | ✅ Complete (87 files) | **Source of truth** - Use for code work |
+| 🇯🇵 **Japanese** | `multigo-ja/` | ✅ Complete (87/87 files - 100%) | Translations for Japanese team members |
 
-1. **[START-HERE.md](active/START-HERE.md)** - Entry point, choose your path
-2. **[IMPLEMENTATION-GUIDE.md](active/IMPLEMENTATION-GUIDE.md)** - Complete 16-week plan
-3. **[SYSTEM-ARCHITECTURE.md](active/SYSTEM-ARCHITECTURE.md)** - Current + proposed architecture
-4. **[ISSUES-AND-FIXES.md](active/ISSUES-AND-FIXES.md)** - All 28 issues + fixes
-5. **[QUICK-SETUP.md](active/QUICK-SETUP.md)** - 30-minute setup guide
-
-**Total reading time:** 30 minutes
-**Then:** Start implementing
+**Translation Status:** Fully translated (December 20, 2025)
 
 ---
 
-### 📖 **`reference/` - Optional Reference**
+## 📁 Documentation Structure
 
-- User guides (for robot operators)
-- Getting started (detailed setup)
-- Presentation materials (for stakeholders)
-
-**When to read:** When training operators or presenting to non-technical audience
-
----
-
-### 📦 **`archive/` - Detailed Reference**
-
-- Full architecture analysis (85,000 words)
-- Detailed requirements
-- Complete issue descriptions
-- Old documentation versions
-
-**When to read:** When you need deep architectural context during implementation
-
----
-
-## 🎯 By Role
-
-### Developer
-→ Read: [START-HERE.md](active/START-HERE.md) → Path 1
-
-### Team Lead
-→ Read: [START-HERE.md](active/START-HERE.md) → Path 2
-
-### Project Manager
-→ Read: [START-HERE.md](active/START-HERE.md) → Path 2
-
-### New Team Member
-→ Read: [START-HERE.md](active/START-HERE.md) → Path 3
-
----
-
-## 📊 What's the Project Status?
-
-| Aspect | Status | Comment |
-|--------|--------|---------|
-| **Navigation** | ✅ Working | Nav2 + RTAB-Map functional |
-| **Docking** | 🐛 Buggy | 3 critical bugs to fix |
-| **Safety** | ❌ Missing | No safety layer (Phase 1) |
-| **Testing** | ❌ 0% | Phase 2 priority |
-| **Overall** | 🟡 **61% Complete** | **Not production-ready** |
-
-**Timeline to production:** 16 weeks (4 phases)
+```
+docs/
+│
+├── 📄 README.md                    ← You are here
+├── 📄 CLAUDE.md                    ← AI assistant context guide
+│
+├── 📁 multigo/                     ← 🇬🇧 ENGLISH (Source of Truth)
+│   ├── README.md
+│   ├── FINAL_SUMMARY_FOR_SENIOR_APPROVAL.md
+│   ├── PRIVACY_LEGAL_REVIEW_PACKAGE_FOR_LI_SAN.md
+│   │
+│   ├── pankaj_vehicle_software/   [Team 1: ROS 2 Vehicle Software]
+│   │   ├── 01_REQUIREMENTS/
+│   │   ├── 02_ARCHITECTURE/
+│   │   ├── 03_DESIGN/
+│   │   ├── 04_INTERFACES/
+│   │   ├── 05_DEVELOPMENT/
+│   │   └── 06_TESTING/
+│   │
+│   ├── unno_tvm_server/           [Team 2: TVM Server Backend]
+│   │   ├── 01_REQUIREMENTS/
+│   │   ├── 02_ARCHITECTURE/
+│   │   ├── 03_DESIGN/
+│   │   ├── 04_INTERFACES/
+│   │   └── 05_DEVELOPMENT/
+│   │
+│   ├── tsuchiya_kiril_hardware/   [Team 3: Hardware Platform]
+│   │   ├── 01_REQUIREMENTS/
+│   │   ├── 02_ARCHITECTURE/
+│   │   ├── 03_DESIGN/
+│   │   ├── 04_INTERFACES/
+│   │   ├── 05_DEVELOPMENT/
+│   │   └── reference/
+│   │
+│   └── shared/                    [Interface Contracts - All Teams]
+│       └── INTERFACES/
+│
+└── 📁 multigo-ja/                  ← 🇯🇵 JAPANESE (Translations)
+    ├── TRANSLATION_STATUS.md       [翻訳進捗 - Translation progress]
+    └── [Same structure as multigo/]
+```
 
 ---
 
-## 🚀 What's Next?
+## 🚀 Quick Start
 
-### This Week
-1. Read [START-HERE.md](active/START-HERE.md)
-2. Team meeting to review plan
-3. Start Phase 1 (fix bugs)
+### For Development Work (Pankaj, All Teams)
 
-### This Month
-- Complete Phase 1 (bugs + safety)
-- Achieve "Safe System" milestone
+**Always use English documentation:**
+```bash
+cd docs/multigo/
 
-### In 4 Months
-- Complete all 4 phases
-- Production-ready system
-- Deployed and operational
+# Read requirements
+cat pankaj_vehicle_software/01_REQUIREMENTS/SYSTEM_REQUIREMENTS.md
 
----
+# Read team guide
+cat pankaj_vehicle_software/README.md
 
-## ❓ Common Questions
+# Read interface specs
+cat shared/INTERFACES/TVM_API_SPECIFICATION.md
+```
 
-### "Where do I start?"
-→ [active/START-HERE.md](active/START-HERE.md)
+**English docs are the source of truth for:**
+- Code implementation
+- Requirements verification
+- Architecture decisions
+- Interface contracts
+- Testing specifications
 
-### "How do I set up the system?"
-→ [active/QUICK-SETUP.md](active/QUICK-SETUP.md)
+### For Japanese Team Members (Unno, Tsuchiya, Kiril)
 
-### "What's the implementation plan?"
-→ [active/IMPLEMENTATION-GUIDE.md](active/IMPLEMENTATION-GUIDE.md)
+**Use Japanese documentation for reading:**
+```bash
+cd docs/multigo-ja/
 
-### "What's broken?"
-→ [active/ISSUES-AND-FIXES.md](active/ISSUES-AND-FIXES.md)
+# 要求仕様を読む / Read requirements
+cat pankaj_vehicle_software/01_REQUIREMENTS/SYSTEM_REQUIREMENTS.md
 
-### "I want detailed architecture info"
-→ [archive/02-DEVELOPER-GUIDE-ARCHITECTURE.md](archive/02-DEVELOPER-GUIDE-ARCHITECTURE.md)
+# チームガイドを読む / Read team guide
+cat pankaj_vehicle_software/README.md
 
-### "I need to present to management"
-→ [reference/CEA_PRESENTATION_LAYMAN_GUIDE.md](reference/CEA_PRESENTATION_LAYMAN_GUIDE.md)
+# 翻訳状況を確認 / Check translation status
+cat TRANSLATION_STATUS.md
+```
 
----
-
-## 📁 Full Index
-
-**See:** [INDEX.md](INDEX.md) for complete documentation map
-
----
-
-## ✅ Remember
-
-**Keep it simple:**
-- ✅ Start with [START-HERE.md](active/START-HERE.md)
-- ✅ Focus on `active/` folder only
-- ✅ Follow the 4-phase plan
-- ❌ Don't try to read everything
-
-**You have everything you need in 5 documents. Start reading!**
+**Important:**
+- Japanese docs are translations only
+- If English and Japanese differ, English is correct
+- Report translation issues to Pankaj
 
 ---
 
-**Questions?** See [START-HERE.md](active/START-HERE.md) or [INDEX.md](INDEX.md)
+## 📚 Key Documents (Read First)
 
-**Last Updated:** 2025-12-02
+### All Teams
+1. **CLAUDE.md** - AI assistant context, bilingual guidelines
+2. **multigo/FINAL_SUMMARY_FOR_SENIOR_APPROVAL.md** - Complete project summary
+3. **multigo/shared/TEAM_SCOPE_DEFINITION.md** - Who does what (decision tree)
+
+### Team 1: Pankaj (Vehicle Software)
+- **multigo/pankaj_vehicle_software/README.md** (507 lines)
+- All requirements in `01_REQUIREMENTS/`
+- ROS 2 architecture in `02_ARCHITECTURE/`
+
+### Team 2: Unno (TVM Server)
+- **multigo/unno_tvm_server/README.md** (410 lines)
+- **multigo/unno_tvm_server/TVM_API_IMPLEMENTATION_GUIDE_FOR_UNNO.md** (742 lines - step-by-step guide)
+- API specs in `shared/INTERFACES/TVM_API_SPECIFICATION.md`
+
+### Team 3: Tsuchiya + Kiril (Hardware)
+- **multigo/tsuchiya_kiril_hardware/README.md** (507 lines)
+- **multigo/tsuchiya_kiril_hardware/HARDWARE_REQUIREMENTS_FOR_TSUCHIYA.md** (853 lines - complete specs)
+- Hardware interfaces in `shared/INTERFACES/HARDWARE_SOFTWARE_INTERFACES.md`
+
+---
+
+## 🌐 Bilingual Workflow
+
+### For Claude (AI Assistant)
+
+**CRITICAL RULES:**
+1. ✅ **Always read/reference:** `docs/multigo/` (English)
+2. ❌ **Never use for code work:** `docs/multigo-ja/` (Japanese)
+3. ✅ **Auto-sync translations:** When updating English, also update Japanese
+4. ✅ **Keep in sync:** Same file path in both folders
+
+**Example:**
+```bash
+# Update English (source of truth)
+Edit: docs/multigo/pankaj_vehicle_software/01_REQUIREMENTS/SAFETY_REQUIREMENTS.md
+
+# Also update Japanese (translation)
+Edit: docs/multigo-ja/pankaj_vehicle_software/01_REQUIREMENTS/SAFETY_REQUIREMENTS.md
+```
+
+### For Human Developers
+
+**English developers (Pankaj):**
+- Work in `docs/multigo/`
+- Update English docs
+- Request Japanese translation if needed
+
+**Japanese developers (Unno, Tsuchiya, Kiril):**
+- Read from `docs/multigo-ja/` (preferred)
+- Can also read `docs/multigo/` (English)
+- Report translation issues or missing translations
+
+---
+
+## 📊 Translation Progress
+
+**Current Status:**
+- **27/115 files translated (23%)**
+- See `multigo-ja/TRANSLATION_STATUS.md` for details
+
+**High Priority Translations (Pending):**
+1. unno_tvm_server/TVM_API_IMPLEMENTATION_GUIDE_FOR_UNNO.md
+2. tsuchiya_kiril_hardware/HARDWARE_REQUIREMENTS_FOR_TSUCHIYA.md
+3. shared/TEAM_SCOPE_DEFINITION.md
+4. All team READMEs
+
+**Goal:** 100% translation coverage
+
+---
+
+## ⚠️ Important Notes
+
+### Source of Truth
+- **English (`multigo/`) is ALWAYS the source of truth**
+- If English and Japanese differ, English is correct
+- All code work must reference English docs
+
+### Interface Contracts (Frozen)
+These files are **frozen** (no changes without approval):
+- `shared/INTERFACES/TVM_API_SPECIFICATION.md`
+- `shared/INTERFACES/HARDWARE_SOFTWARE_INTERFACES.md`
+- `shared/INTERFACES/TVM_DATA_MODELS.md`
+
+Changes require approval from all affected teams.
+
+### Team Boundaries
+- Each team has clear scope (see `shared/TEAM_SCOPE_DEFINITION.md`)
+- Cross-team work requires coordination
+- Use decision tree to determine ownership
+
+---
+
+## 🔗 Related Resources
+
+**Repository:** `multigo_navigation_ai_integrated`
+**ROS 2 Workspace:** `/home/multigo/multigo_ws/`
+**Services:** `multigo-vehicle.service`, `multigo-ui.service`
+
+---
+
+## 📧 Questions?
+
+**For documentation questions:**
+- Pankaj (Project Lead, Team 1)
+
+**For translation questions:**
+- Check `multigo-ja/TRANSLATION_STATUS.md`
+- Report missing/incorrect translations to Pankaj
+
+**For technical questions:**
+- See team-specific READMEs
+- See `shared/TEAM_SCOPE_DEFINITION.md` for responsibility matrix
+
+---
+
+**Last Updated:** December 19, 2025
+**Status:** Documentation complete, 23% translated, awaiting senior approval
+**Next Phase:** Implementation (18-20 weeks)

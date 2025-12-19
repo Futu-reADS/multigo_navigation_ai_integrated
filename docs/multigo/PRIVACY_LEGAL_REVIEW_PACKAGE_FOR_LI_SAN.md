@@ -29,7 +29,7 @@
 **Main Document:**
 ```
 File: pankaj_vehicle_software/01_REQUIREMENTS/PRIVACY_REQUIREMENTS.md
-Path: /docs/active/outdoor_swerve_system/pankaj_vehicle_software/01_REQUIREMENTS/
+Path: /docs/multigo/pankaj_vehicle_software/01_REQUIREMENTS/
 Lines: 1,124
 ```
 
